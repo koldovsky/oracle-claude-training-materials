@@ -13,6 +13,11 @@
 
   // Зберігає авторизацію Claude Code і історію сесій між перезбірками контейнера.
   // Без цього довелося б логінитись заново після кожного rebuild.
+  //
+  // Docker створює том власністю root, а контейнер працює під vscode.
+  // Без chown у postCreateCommand Claude Code не може писати в ~/.claude:
+  // логін не зберігається ("Not logged in" одразу після входу) і сипле
+  // "Transcript writes are failing (EACCES)".
   "mounts": [
     "source=claude-code-config-${devcontainerId},target=/home/vscode/.claude,type=volume"
   ],
@@ -22,8 +27,9 @@
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"
   },
 
-  // Розпаковує wallet із секрету і зберігає іменоване з'єднання для MCP
-  "postCreateCommand": "bash .devcontainer/post-create.sh",
+  // Спершу віддаємо том користувачу (див. коментар до mounts),
+  // потім розпаковуємо wallet і зберігаємо іменоване з'єднання для MCP
+  "postCreateCommand": "sudo chown -R vscode:vscode /home/vscode/.claude && bash .devcontainer/post-create.sh",
 
   "customizations": {
     "vscode": {
