@@ -1,0 +1,6 @@
+# Скрипти виконуються в Linux-контейнері.
+# Без цього Windows-CRLF дає "bad interpreter: /usr/bin/env bash^M".
+* text=auto eol=lf
+*.sh   text eol=lf
+*.sql  text eol=lf
+Dockerfile text eol=lf

@@ -1,0 +1,7 @@
+# Паролі й wallet — ніколи не потрапляють у git
+.secrets/
+wallet.zip
+*.sso
+*.p12
+tnsnames.ora
+sqlnet.ora

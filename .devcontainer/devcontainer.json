@@ -1,0 +1,35 @@
+{
+  "name": "AcordBank — Oracle + Claude Code",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {},
+    "ghcr.io/anthropics/devcontainer-features/claude-code:1": {}
+  },
+
+  "remoteUser": "vscode",
+
+  // Зберігає авторизацію Claude Code і історію сесій між перезбірками контейнера.
+  // Без цього довелося б логінитись заново після кожного rebuild.
+  "mounts": [
+    "source=claude-code-config-${devcontainerId},target=/home/vscode/.claude,type=volume"
+  ],
+
+  "containerEnv": {
+    // Вимикає необов'язкову телеметрію — один із пунктів, які питає служба ІБ
+    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"
+  },
+
+  // Розпаковує wallet із секрету і зберігає іменоване з'єднання для MCP
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "Oracle.sql-developer"
+      ]
+    }
+  }
+}

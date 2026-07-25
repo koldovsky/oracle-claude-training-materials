@@ -1,0 +1,20 @@
+# Ніколи не комітимо облікові дані та wallet
+setup/.secrets/
+adb-wallet/
+wallet.zip
+*.b64
+cwallet.sso
+ewallet.p12
+tnsnames.ora
+sqlnet.ora
+ojdbc.properties
+keystore.jks
+truststore.jks
+
+# Робочі файли
+*.log
+_grants_generated.sql
+
+# Комерційний концепт — не для очей учасників навчання.
+# Лишається локально / передається замовнику окремо.
+CONCEPT.md
