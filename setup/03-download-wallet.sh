@@ -1,52 +1,39 @@
 #!/usr/bin/env bash
 #
 # Завантажує wallet (client credentials) навчальної БД.
-# Цей файл роздається всім 5 учасникам — wallet прив'язаний до бази, не до користувача.
+# Цей файл роздається всім учасникам — wallet прив'язаний до бази, не до користувача.
 #
 # Запуск:  ./03-download-wallet.sh
 
 set -euo pipefail
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib.sh"
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SECRETS_DIR="$SCRIPT_DIR/.secrets"
-WALLET_PWD_FILE="$SECRETS_DIR/wallet-password"
-WALLET_FILE="$SCRIPT_DIR/wallet.zip"
+command -v oci >/dev/null || die "oci CLI не знайдено в PATH"
 
-DB_NAME="${DB_NAME:-ACORDTRAIN}"
-
-command -v oci >/dev/null || { echo "ПОМИЛКА: oci CLI не знайдено в PATH." >&2; exit 1; }
-[[ -f "$WALLET_PWD_FILE" ]] || { echo "ПОМИЛКА: немає $WALLET_PWD_FILE. Запустіть 00-generate-secrets.sh" >&2; exit 1; }
-
-# Compartment: явно заданий → $OCI_TENANCY (Cloud Shell) → ~/.oci/config (локально)
-if [[ -z "${COMPARTMENT_OCID:-}" ]]; then
-  if [[ -n "${OCI_TENANCY:-}" ]]; then
-    COMPARTMENT_OCID="$OCI_TENANCY"
-  elif [[ -f "$HOME/.oci/config" ]]; then
-    COMPARTMENT_OCID="$(grep -E '^tenancy' "$HOME/.oci/config" | head -1 | cut -d= -f2 | tr -d ' ')"
-  fi
-fi
-
-[[ -n "${COMPARTMENT_OCID:-}" ]] || {
-  echo "ПОМИЛКА: не вдалося визначити compartment. Задайте COMPARTMENT_OCID вручну." >&2; exit 1; }
+WALLET_PWD="$(need_secret wallet-password)"
+COMPARTMENT_OCID="$(resolve_compartment)"
 
 ADB_OCID="$(oci db autonomous-database list \
   --compartment-id "$COMPARTMENT_OCID" \
   --query "data[?\"db-name\"=='$DB_NAME' && \"lifecycle-state\"=='AVAILABLE'] | [0].id" \
-  --raw-output)"
+  --raw-output 2>/dev/null)" || die "не вдалося отримати перелік баз"
 
-[[ -n "$ADB_OCID" && "$ADB_OCID" != "null" ]] || {
-  echo "ПОМИЛКА: не знайдено доступну БД з іменем '$DB_NAME'." >&2; exit 1; }
+[[ -n "$ADB_OCID" && "$ADB_OCID" != "null" ]] \
+  || die "не знайдено доступну БД з іменем '$DB_NAME'"
 
-echo "БД знайдено: $ADB_OCID"
+log "БД знайдено: $ADB_OCID"
 
+mkdir -p "$SECRETS_DIR"
 oci db autonomous-database generate-wallet \
   --autonomous-database-id "$ADB_OCID" \
-  --password "$(cat "$WALLET_PWD_FILE")" \
-  --file "$WALLET_FILE"
+  --password "$WALLET_PWD" \
+  --file "$WALLET_FILE" > /dev/null
+
+unzip -tq "$WALLET_FILE" >/dev/null 2>&1 || die "отриманий wallet не є коректним zip"
+chmod 600 "$WALLET_FILE" 2>/dev/null || true
 
 echo
-echo "Wallet збережено: $WALLET_FILE"
-echo "Пароль wallet:    $WALLET_PWD_FILE"
+echo "Wallet збережено: $WALLET_FILE ($(stat -c%s "$WALLET_FILE") байт)"
 echo
-echo "Роздати учасникам разом з їхніми логінами. Приклад підключення:"
-echo "  conn -save train -savepwd TRAINEE1/<pwd>@${DB_NAME,,}_low"
+echo "Для секрету GitHub:  base64 -w0 '$WALLET_FILE'"
+echo "Далі:  ./02-create-users.sh"

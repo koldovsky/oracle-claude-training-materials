@@ -3,79 +3,68 @@
 # Створення навчальної Oracle Autonomous Database (Always Free).
 #
 # Передумови:
-#   1. Встановлений OCI CLI:  https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/cliinstall.htm
-#   2. Виконано `oci setup config` (або налаштована автентифікація іншим способом)
+#   1. OCI CLI (у Cloud Shell уже є й автентифікований — найпростіший шлях)
+#   2. ./00-generate-secrets.sh виконано
 #
-# Запуск:
-#   ./01-create-adb.sh
+# Запуск:  ./01-create-adb.sh
 #
-# Пароль ADMIN береться з setup/.secrets/adb-admin-password.
-# Якщо файлу немає — скрипт сам викличе 00-generate-secrets.sh.
-# Пароль ніде не виводиться на екран і не потрапляє в логи.
+# Пароль ADMIN береться з каталогу секретів, на екран не виводиться.
 
 set -euo pipefail
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib.sh"
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SECRETS_DIR="$SCRIPT_DIR/.secrets"
-PWD_FILE="$SECRETS_DIR/adb-admin-password"
-
-DB_NAME="${DB_NAME:-ACORDTRAIN}"          # макс. 14 символів, лише літери й цифри
 DISPLAY_NAME="${DISPLAY_NAME:-AcordBank Training}"
 
-# ---------- перевірки перед створенням ----------
+command -v oci >/dev/null || die "oci CLI не знайдено в PATH"
 
-command -v oci >/dev/null || { echo "ПОМИЛКА: oci CLI не знайдено в PATH." >&2; exit 1; }
+ADMIN_PWD="$(need_secret adb-admin-password)"
+[[ ${#ADMIN_PWD} -ge 12 && ${#ADMIN_PWD} -le 30 ]] \
+  || die "пароль ADMIN має бути 12-30 символів"
 
-if [[ ! -f "$PWD_FILE" ]]; then
-  echo "Пароль ADMIN ще не згенеровано — запускаємо 00-generate-secrets.sh"
-  "$SCRIPT_DIR/00-generate-secrets.sh"
-  echo
-fi
-
-ADB_ADMIN_PASSWORD="$(cat "$PWD_FILE")"
-
-if [[ ${#ADB_ADMIN_PASSWORD} -lt 12 || ${#ADB_ADMIN_PASSWORD} -gt 30 ]]; then
-  echo "ПОМИЛКА: пароль у $PWD_FILE має бути 12-30 символів." >&2
-  exit 1
-fi
-
-# Compartment: явно заданий → $OCI_TENANCY → ~/.oci/config
-#
-# У Cloud Shell файлу ~/.oci/config НЕМАЄ: автентифікація йде делегованим
-# токеном сесії, а OCID тенанта лежить у змінній OCI_TENANCY.
-# Локально ж навпаки — є config, а змінної немає.
-if [[ -z "${COMPARTMENT_OCID:-}" ]]; then
-  if [[ -n "${OCI_TENANCY:-}" ]]; then
-    COMPARTMENT_OCID="$OCI_TENANCY"
-  elif [[ -f "$HOME/.oci/config" ]]; then
-    COMPARTMENT_OCID="$(grep -E '^tenancy' "$HOME/.oci/config" | head -1 | cut -d= -f2 | tr -d ' ')"
-  fi
-fi
-
-if [[ -z "${COMPARTMENT_OCID:-}" ]]; then
-  echo "ПОМИЛКА: не вдалося визначити compartment." >&2
-  echo "Задайте вручну:  export COMPARTMENT_OCID='ocid1.compartment.oc1..…'" >&2
-  exit 1
-fi
+COMPARTMENT_OCID="$(resolve_compartment)"
 echo "Compartment: $COMPARTMENT_OCID"
 
-# ---------- ключова перевірка: чи є вільний слот Always Free ----------
-# Always Free дає лише 2 інстанси на тенант. Якщо ліміт вичерпано, створення
-# без цієї перевірки мовчки зробить ПЛАТНУ базу.
+# --- захист від випадкового ПЛАТНОГО інстансу ----------------------------
+#
+# Always Free дає 2 інстанси НА ТЕНАНТ. Якщо ліміт вичерпано, прапорець
+# --is-free-tier не дає помилки, а створює платну базу.
+#
+# Перевірка навмисно "падає в закритий бік": якщо кількість НЕ вдалося
+# отримати (немає прав, збій мережі, змінився формат виводу) — зупиняємось.
+# Раніше тут було `|| echo 0`, і будь-який збій читався як «вільно» —
+# тобто захист мовчки вимикався саме тоді, коли був найпотрібніший.
+#
+# Рахуємо по всьому тенанту, а не лише в поточному compartment.
 
-FREE_COUNT="$(oci db autonomous-database list \
-  --compartment-id "$COMPARTMENT_OCID" \
-  --query "length(data[?\"is-free-tier\"==\`true\` && \"lifecycle-state\"!='TERMINATED'])" \
-  --raw-output 2>/dev/null || echo 0)"
+TENANCY_OCID="${OCI_TENANCY:-$COMPARTMENT_OCID}"
 
-echo "Наявних Always Free баз: $FREE_COUNT з 2"
-if [[ "$FREE_COUNT" -ge 2 ]]; then
-  echo "ПОМИЛКА: ліміт Always Free вичерпано. Створення зупинено, щоб не отримати платний інстанс." >&2
-  echo "Видаліть непотрібну базу або використайте наявну." >&2
-  exit 1
+echo "Перевіряємо ліміт Always Free по всьому тенанту..."
+if ! FREE_JSON="$(oci db autonomous-database list \
+      --compartment-id "$TENANCY_OCID" \
+      --compartment-id-in-subtree true \
+      --all 2>/dev/null)"; then
+  die "не вдалося отримати перелік баз. Зупиняємось, щоб не створити ПЛАТНИЙ інстанс.
+     Перевірте права й підключення, або задайте SKIP_FREE_CHECK=1 свідомо."
 fi
 
-# ---------- створення ----------
+FREE_COUNT="$(printf '%s' "$FREE_JSON" \
+  | python3 -c 'import json,sys
+d=json.load(sys.stdin).get("data",[])
+print(sum(1 for x in d if x.get("is-free-tier") and x.get("lifecycle-state")!="TERMINATED"))' 2>/dev/null)" \
+  || die "не вдалося порахувати наявні Always Free бази — зупиняємось"
+
+echo "Наявних Always Free баз: $FREE_COUNT з 2"
+if [[ "${SKIP_FREE_CHECK:-0}" != "1" && "$FREE_COUNT" -ge 2 ]]; then
+  die "ліміт Always Free вичерпано. Створення зупинено, щоб не отримати платний інстанс.
+     Видаліть непотрібну базу або використайте наявну."
+fi
+
+# Чи немає вже бази з таким іменем
+if printf '%s' "$FREE_JSON" | grep -q "\"db-name\": \"$DB_NAME\""; then
+  die "база з іменем $DB_NAME уже існує. Оберіть інше DB_NAME або використайте наявну."
+fi
+
+# --- створення -----------------------------------------------------------
 
 echo "Створюємо '$DISPLAY_NAME' ($DB_NAME)..."
 
@@ -87,12 +76,23 @@ oci db autonomous-database create \
   --is-free-tier true \
   --cpu-core-count 1 \
   --data-storage-size-in-tbs 1 \
-  --admin-password "$ADB_ADMIN_PASSWORD" \
-  --wait-for-state AVAILABLE
+  --admin-password "$ADMIN_PWD" \
+  --wait-for-state AVAILABLE > /dev/null
+
+# --- перевірка ПІСЛЯ створення -------------------------------------------
+# Довіряти прапорцю на вході недостатньо — переконуємось, що створене
+# справді безкоштовне.
+
+CREATED="$(oci db autonomous-database list \
+  --compartment-id "$COMPARTMENT_OCID" \
+  --query "data[?\"db-name\"=='$DB_NAME'] | [0].{free:\"is-free-tier\",state:\"lifecycle-state\",ver:\"db-version\"}" \
+  --output json 2>/dev/null)" || die "базу створено, але не вдалося перевірити її тариф — перевірте вручну в консолі"
+
+echo "$CREATED" | grep -q '"free": true' \
+  || die "УВАГА: створена база НЕ є Always Free. Негайно перевірте в консолі OCI та видаліть, якщо вона платна."
 
 echo
-echo "Готово. Наступні кроки:"
-echo "  1. ./03-download-wallet.sh          — завантажити wallet"
-echo "  2. 02-training-users.sql від ADMIN  — створити 5 схем для учасників"
+echo "Готово, база безкоштовна. Параметри:"
+echo "$CREATED"
 echo
-echo "Пароль ADMIN: $PWD_FILE"
+echo "Далі:  ./03-download-wallet.sh"

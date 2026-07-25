@@ -2,127 +2,120 @@
 #
 # Збирає всі доступи навчального середовища в ОДИН зашифрований файл.
 #
-# Запуск (у Cloud Shell, де лежить ~/.secrets):
-#   ./04-backup-secrets.sh
+# Запуск:  ./04-backup-secrets.sh
 #
 # Скрипт запитає парольну фразу — її вводите ВИ, вона нікуди не записується.
-# Запам'ятайте або збережіть її в менеджері паролів: без неї архів не відкрити.
-#
-# Результат: ~/acordbank-secrets.gpg — завантажте через Menu -> Download.
+# Збережіть її окремо (менеджер паролів): без неї архів не відкрити.
 #
 # Відкрити пізніше (Git Bash / Linux / macOS):
 #   gpg -d acordbank-secrets.gpg | tar xzf - -C ./restored
 #
-# Жоден пароль на екран не виводиться.
+# Жоден пароль не виводиться на екран.
 
 set -euo pipefail
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib.sh"
 
-SECRETS_DIR="$HOME/.secrets"
-WALLET="$HOME/wallet.zip"
-OUT="$HOME/acordbank-secrets.gpg"
-
+OUT="${BACKUP_OUT:-$HOME/acordbank-secrets.gpg}"
+TMP_OUT="$OUT.new.$$"
 STAGE="$(mktemp -d)"
-trap 'rm -rf "$STAGE"' EXIT
+trap 'rm -rf "$STAGE" "$TMP_OUT"' EXIT
 chmod 700 "$STAGE"
 
-[[ -d "$SECRETS_DIR" ]] || { echo "ПОМИЛКА: немає $SECRETS_DIR" >&2; exit 1; }
+command -v gpg >/dev/null || die "gpg не знайдено"
+[[ -d "$SECRETS_DIR" ]] || die "немає $SECRETS_DIR"
 
-read_secret() {  # тихо читає файл; порожньо, якщо його немає
-  [[ -s "$SECRETS_DIR/$1" ]] && cat "$SECRETS_DIR/$1" || echo "(немає)"
-}
+# --- 1. Повнота ПЕРЕД шифруванням ----------------------------------------
+# Неповний архів гірший за його відсутність: він створює хибну впевненість.
+# Тому бракуючі складові — помилка, а не попередження.
 
-# --- OCI / БД: витягуємо з живого середовища, а не з пам'яті ---
-ADB_OCID="$(oci db autonomous-database list \
-  --compartment-id "${OCI_TENANCY:-}" \
-  --query "data[?\"db-name\"=='ACORDTRAIN'] | [0].id" --raw-output 2>/dev/null || echo '(не визначено)')"
+MISSING=()
+for f in adb-admin-password wallet-password sample-schema-password users.txt; do
+  [[ -s "$SECRETS_DIR/$f" ]] || MISSING+=("$f")
+done
+[[ -s "$WALLET_FILE" ]] || MISSING+=("wallet.zip")
 
-{
-  echo "==============================================================="
-  echo " AcordBank — навчальне середовище Claude Code + Oracle"
-  echo " Резервна копія доступів"
-  echo " Створено: $(date -u '+%Y-%m-%d %H:%M UTC')"
-  echo "==============================================================="
-  echo
-  echo "--- Oracle Cloud ---"
-  echo "Tenancy OCID : ${OCI_TENANCY:-(не визначено)}"
-  echo "Регіон       : ${OCI_REGION:-eu-frankfurt-1}"
-  echo "ADB OCID     : $ADB_OCID"
-  echo "Ім'я БД      : ACORDTRAIN"
-  echo "Версія       : Oracle 19.32.0.1.0, Always Free"
-  echo "Сервіси      : acordtrain_low / _medium / _high"
-  echo "               (для навчання використовуємо _low)"
-  echo
-  echo "--- Паролі БД ---"
-  echo "ADMIN                : $(read_secret adb-admin-password)"
-  echo "Пароль wallet        : $(read_secret wallet-password)"
-  echo "Власники HR/CO схем  : $(read_secret sample-schema-password)"
-  echo
-  echo "--- Користувачі (логін:пароль) ---"
-  if [[ -s "$SECRETS_DIR/users.txt" ]]; then cat "$SECRETS_DIR/users.txt"; else echo "(немає users.txt)"; fi
-  echo
-  echo "TRAINEE1..5 — учасники, кожен у власній схемі"
-  echo "TRAINER     — демо-схема тренера"
-  echo "Усі мають: CONNECT, RESOURCE, training_read (читання HR/CO),"
-  echo "           SELECT_CATALOG_ROLE (для демо аудиту через V\$SQL)"
-  echo
-  echo "--- GitHub ---"
-  echo "Репозиторій : https://github.com/koldovsky/acordbank-oracle-training"
-  echo
-  echo "Секрети рівня РЕПОЗИТОРІЮ (спільні):"
-  echo "  ADB_WALLET_B64  = base64 -w0 wallet.zip"
-  echo "  ADB_SERVICE     = acordtrain_low"
-  echo
-  echo "Секрети рівня КОРИСТУВАЧА (кожен свої, scope = цей репозиторій):"
-  echo "  ADB_USER        = TRAINEE1 / TRAINER / ..."
-  echo "  ADB_PASSWORD    = відповідний пароль вище"
-  echo
-  echo "--- Що робити, якщо щось загублено ---"
-  echo "Пароль ADMIN     : скидається в консолі OCI, ADB -> More actions -> Administrator password"
-  echo "Wallet           : перегенерується — setup/03-download-wallet.sh"
-  echo "Паролі учасників : скидаються від ADMIN через ALTER USER ... IDENTIFIED BY"
-  echo "Тобто нічого тут не є непоправним — це копія для зручності, не єдина точка відмови."
-} > "$STAGE/ДОСТУПИ.txt"
-
-# --- wallet ---
-if [[ -f "$WALLET" ]]; then
-  cp "$WALLET" "$STAGE/wallet.zip"
-else
-  echo "(wallet.zip не знайдено — перегенеруйте через 03-download-wallet.sh)" > "$STAGE/wallet-ВІДСУТНІЙ.txt"
+if [[ ${#MISSING[@]} -gt 0 ]]; then
+  die "бракує складових: ${MISSING[*]}
+     Спершу виконайте 00-generate-secrets.sh і 03-download-wallet.sh.
+     Резервну копію робимо лише повною."
 fi
 
-echo "Зібрано: $(ls "$STAGE" | tr '\n' ' ')"
+# --- 2. Збираємо ----------------------------------------------------------
+
+ADB_OCID="$(oci db autonomous-database list \
+  --compartment-id "$(resolve_compartment)" \
+  --query "data[?\"db-name\"=='$DB_NAME'] | [0].id" --raw-output 2>/dev/null || echo '(не визначено)')"
+
+{
+  echo "AcordBank - Claude Code + Oracle training environment"
+  echo "Credentials backup, created: $(date -u '+%Y-%m-%d %H:%M') UTC"
+  echo
+  echo "[ORACLE CLOUD]"
+  echo "Tenancy OCID : ${OCI_TENANCY:-(not detected)}"
+  echo "Region       : ${OCI_REGION:-(not detected)}"
+  echo "ADB OCID     : $ADB_OCID"
+  echo "DB name      : $DB_NAME"
+  echo "Service      : $DB_SERVICE   (_low limits per-query parallelism)"
+  echo
+  echo "[DB PASSWORDS]"
+  echo "ADMIN                : $(cat "$SECRETS_DIR/adb-admin-password")"
+  echo "Wallet password      : $(cat "$SECRETS_DIR/wallet-password")"
+  echo "HR/CO schema owners  : $(cat "$SECRETS_DIR/sample-schema-password")"
+  echo
+  echo "[USERS  login:password]"
+  cat "$SECRETS_DIR/users.txt"
+  echo "TRAINEE1-5 = participants, own schema each. TRAINER = trainer demo schema."
+  echo
+  echo "[GITHUB]"
+  echo "Repo: https://github.com/koldovsky/acordbank-oracle-training"
+  echo "Repo-level secrets: ADB_WALLET_B64, ADB_SERVICE=$DB_SERVICE"
+  echo "User-level secrets: ADB_USER, ADB_PASSWORD  (each person sets own)"
+  echo
+  echo "[RECOVERY]"
+  echo "ADMIN pwd : OCI console -> ADB -> More actions -> Administrator password"
+  echo "Wallet    : regenerate via setup/03-download-wallet.sh"
+  echo "User pwd  : as ADMIN run  ALTER USER x IDENTIFIED BY \"y\""
+  echo "Nothing here is unrecoverable - this is a convenience copy, not a single point of failure."
+} > "$STAGE/CREDENTIALS.txt"
+
+cp "$WALLET_FILE" "$STAGE/wallet.zip"
+log "зібрано: $(ls "$STAGE" | tr '\n' ' ')"
+
+# --- 3. Шифруємо у ТИМЧАСОВИЙ файл ---------------------------------------
+# Наявну копію не чіпаємо, доки нова не пройде перевірку.
+
 echo
-echo "УВАГА: у Cloud Shell немає pinentry, тому gpg працює в режимі loopback"
-echo "і питає фразу ОДИН раз, без підтвердження. Друкарська помилка мовчки"
-echo "стане паролем. Тому нижче — обов'язкова перевірка розшифруванням."
+echo "УВАГА: без pinentry gpg питає фразу ОДИН раз, без підтвердження."
+echo "Друкарська помилка мовчки стане паролем — тому нижче обов'язкова перевірка."
 echo
 
-rm -f "$OUT"
 tar czf - -C "$STAGE" . \
   | gpg --symmetric --pinentry-mode loopback \
-        --cipher-algo AES256 --s2k-digest-algo SHA512 -o "$OUT"
+        --cipher-algo AES256 --s2k-digest-algo SHA512 -o "$TMP_OUT"
 
-chmod 600 "$OUT"
-echo
-echo "Зашифровано: $OUT ($(stat -c%s "$OUT") байт)"
-echo
+# --- 4. Перевірка розшифруванням -----------------------------------------
+# Скидання кешу агента тут КРИТИЧНЕ: без нього gpg візьме фразу з кешу
+# й розшифрує успішно навіть тоді, коли ви ввели не те, що думаєте.
+# Перевірка без цього рядка не перевіряє нічого.
 
-# --- перевірка ---------------------------------------------------------
-# Скидання кешу агента тут КРИТИЧНЕ. Без нього gpg візьме фразу з кешу,
-# розшифрує успішно й покаже "все добре" — навіть якщо ви ввели не те,
-# що думаєте. Перевірка без цього рядка не перевіряє нічого.
 gpgconf --kill gpg-agent 2>/dev/null || true
 sleep 1
 
 echo "Перевірка: введіть ТУ САМУ фразу ще раз."
-if gpg -d --pinentry-mode loopback "$OUT" 2>/dev/null | tar tzf - > /dev/null; then
-  echo
-  echo "OK — архів відкривається цією фразою."
-  echo "Завантажте через Menu -> Download, ім'я файлу: acordbank-secrets.gpg"
-  echo "Відкрити пізніше:  gpg -d acordbank-secrets.gpg | tar xzf - -C ./restored"
-else
-  echo
-  echo "ПОМИЛКА: архів не відкривається введеною фразою." >&2
-  echo "Файл $OUT непридатний — видаліть його і запустіть скрипт заново." >&2
-  exit 1
-fi
+LISTING="$(gpg -d --pinentry-mode loopback "$TMP_OUT" 2>/dev/null | tar tzf - 2>/dev/null || true)"
+
+for required in CREDENTIALS.txt wallet.zip; do
+  grep -q "$required" <<< "$LISTING" \
+    || die "перевірка не пройшла: в архіві немає $required, або фраза невірна.
+     Попередню копію НЕ змінено: ${OUT}"
+done
+
+# --- 5. Атомарна заміна ---------------------------------------------------
+
+mv -f "$TMP_OUT" "$OUT"
+chmod 600 "$OUT" 2>/dev/null || true
+
+echo
+echo "OK — архів повний і відкривається цією фразою."
+echo "Файл: $OUT ($(stat -c%s "$OUT") байт)"
+echo "Відкрити:  gpg -d '$OUT' | tar xzf - -C ./restored"

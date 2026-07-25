@@ -9,19 +9,29 @@
 
 ## Частина A. Тренер, один раз
 
+> **Де лежать секрети.** Усі скрипти беруть шлях з одного місця — `setup/lib.sh`.
+> За замовчуванням це `~/.acordbank/secrets`. Змінюється змінною
+> `ACORDBANK_SECRETS_DIR`. Wallet лежить там само.
+
 ### A1. База даних
 
 Потрібен OCI CLI (у **Cloud Shell** він уже є й автентифікований — це найпростіший шлях).
 
 ```bash
-./setup/00-generate-secrets.sh    # паролі ADMIN і wallet, локально, на екран не виводяться
-./setup/01-create-adb.sh          # Always Free ADB; зупиниться, якщо ліміт вичерпано
-./setup/03-download-wallet.sh     # wallet.zip
+./setup/00-generate-secrets.sh    # УСІ облікові дані; на екран не виводяться
+./setup/01-create-adb.sh          # Always Free ADB
+./setup/03-download-wallet.sh     # wallet
 ```
 
-Скрипт `01` **перевіряє кількість наявних Always Free баз перед створенням**.
+`00` генерує повний комплект: пароль ADMIN, пароль wallet, пароль власників
+схем HR/CO і `users.txt` із логінами та паролями 5 учасників і тренера.
+Повторний запуск наявні значення не чіпає.
+
+`01` **перевіряє ліміт Always Free по всьому тенанту перед створенням**.
 Це не формальність: при вичерпаному ліміті прапорець `--is-free-tier` не дає
-помилки, а мовчки створює **платну** базу.
+помилки, а мовчки створює **платну** базу. Перевірка навмисно зупиняє роботу,
+якщо кількість не вдалося отримати — збій прав чи мережі не має читатися як
+«вільно». Після створення скрипт окремо підтверджує, що база справді безкоштовна.
 
 ### A2. Sample-схеми
 
@@ -33,9 +43,10 @@ unzip -q s.zip && mv db-sample-schemas-23.1 db-sample-schemas && rm s.zip
 Ставимо **лише HR і CO**:
 
 ```bash
+S=~/.acordbank/secrets
 cd db-sample-schemas/human_resources
-printf '%s\nDATA\nYES\n' "$(cat ~/.secrets/sample-schema-password)" \
-  | sql -S -cloudconfig ~/wallet.zip ADMIN/"$(cat ~/.secrets/adb-admin-password)"@acordtrain_low @hr_install.sql
+printf '%s\nDATA\nYES\n' "$(cat $S/sample-schema-password)" \
+  | sql -S -cloudconfig $S/wallet.zip ADMIN/"$(cat $S/adb-admin-password)"@acordtrain_low @hr_install.sql
 ```
 
 Те саме для `customer_orders/co_install.sql`.
@@ -52,17 +63,19 @@ printf '%s\nDATA\nYES\n' "$(cat ~/.secrets/sample-schema-password)" \
 ### A3. Схеми учасників
 
 ```bash
-sql -cloudconfig ~/wallet.zip ADMIN/<pwd>@acordtrain_low @setup/02-training-users.sql
+./setup/02-create-users.sh
 ```
 
-Перед запуском **замініть паролі** в секції 3 скрипта.
+Паролі бере з `users.txt`, згенерованого в A1 — вручну нічого підставляти
+не треба. Скрипт сам зчитує перелік таблиць HR/CO з живого словника і будує
+гранти під нього.
 
-> DDL у скрипті навмисно **плоский, без PL/SQL-обгортки**. Привілеї, видані
-> через роль (а `CREATE USER` в ADMIN на ADB саме такий), не діють усередині
-> анонімного блоку — обгортка дала б `ORA-01031`.
+> DDL навмисно **плоский, без PL/SQL-обгортки**. Привілеї, видані через роль
+> (а `CREATE USER` в ADMIN на ADB саме такий), не діють усередині анонімного
+> блоку — обгортка дала б `ORA-01031`.
 
-Перевірка: 6 користувачів `OPEN`, гранти на HR і CO. SH у списку грантів
-не буде — так і має бути.
+Наприкінці скрипт друкує перевірку: 6 користувачів `OPEN`, гранти на HR і CO.
+SH у списку грантів не буде — так і має бути.
 
 ### A4. Секрети GitHub
 
