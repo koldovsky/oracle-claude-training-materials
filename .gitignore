@@ -11,6 +11,9 @@ ojdbc.properties
 keystore.jks
 truststore.jks
 
+# Персональні рішення про дозволи Claude Code — у кожного свої
+.claude/settings.local.json
+
 # Робочі файли
 *.log
 _grants_generated.sql

@@ -46,9 +46,16 @@ log "wallet отримано ($(stat -c%s "$WALLET_DIR/wallet.zip") байт)"
 
 # --- збережене з'єднання --------------------------------------------------
 
-if [[ -z "${ADB_USER:-}" || -z "${ADB_PASSWORD:-}" || -z "${ADB_SERVICE:-}" ]]; then
-  warn "ADB_USER / ADB_PASSWORD / ADB_SERVICE задані не всі — з'єднання не збережено."
-  warn "Підключитись вручну: sql -cloudconfig $WALLET_DIR/wallet.zip USER/PWD@SERVICE"
+if [[ -z "${ADB_USER:-}" || -z "${ADB_PASSWORD:-}" ]]; then
+  warn "Не задані ваші особисті секрети ADB_USER / ADB_PASSWORD."
+  warn "Додайте їх у GitHub Settings -> Codespaces -> Secrets,"
+  warn "у полі Repository access оберіть цей репозиторій, і перестворіть Codespace."
+  warn "Це секрети рівня КОРИСТУВАЧА, не репозиторію — саме вони дають кожному власну схему."
+  exit 0
+fi
+
+if [[ -z "${ADB_SERVICE:-}" ]]; then
+  warn "Не заданий ADB_SERVICE (секрет рівня репозиторію) — зверніться до тренера."
   exit 0
 fi
 
