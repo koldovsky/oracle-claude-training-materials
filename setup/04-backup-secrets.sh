@@ -92,16 +92,37 @@ fi
 
 echo "Зібрано: $(ls "$STAGE" | tr '\n' ' ')"
 echo
-echo "Зараз буде запит парольної фрази для шифрування (двічі)."
-echo "Оберіть надійну і збережіть її окремо — без неї архів не відкрити."
+echo "УВАГА: у Cloud Shell немає pinentry, тому gpg працює в режимі loopback"
+echo "і питає фразу ОДИН раз, без підтвердження. Друкарська помилка мовчки"
+echo "стане паролем. Тому нижче — обов'язкова перевірка розшифруванням."
 echo
 
 rm -f "$OUT"
-tar czf - -C "$STAGE" . | gpg --symmetric --cipher-algo AES256 --s2k-digest-algo SHA512 -o "$OUT"
+tar czf - -C "$STAGE" . \
+  | gpg --symmetric --pinentry-mode loopback \
+        --cipher-algo AES256 --s2k-digest-algo SHA512 -o "$OUT"
 
 chmod 600 "$OUT"
 echo
-echo "Готово: $OUT ($(stat -c%s "$OUT") байт)"
+echo "Зашифровано: $OUT ($(stat -c%s "$OUT") байт)"
 echo
-echo "Завантажте через Menu -> Download, ім'я файлу: acordbank-secrets.gpg"
-echo "Відкрити:  gpg -d acordbank-secrets.gpg | tar xzf - -C ./restored"
+
+# --- перевірка ---------------------------------------------------------
+# Скидання кешу агента тут КРИТИЧНЕ. Без нього gpg візьме фразу з кешу,
+# розшифрує успішно й покаже "все добре" — навіть якщо ви ввели не те,
+# що думаєте. Перевірка без цього рядка не перевіряє нічого.
+gpgconf --kill gpg-agent 2>/dev/null || true
+sleep 1
+
+echo "Перевірка: введіть ТУ САМУ фразу ще раз."
+if gpg -d --pinentry-mode loopback "$OUT" 2>/dev/null | tar tzf - > /dev/null; then
+  echo
+  echo "OK — архів відкривається цією фразою."
+  echo "Завантажте через Menu -> Download, ім'я файлу: acordbank-secrets.gpg"
+  echo "Відкрити пізніше:  gpg -d acordbank-secrets.gpg | tar xzf - -C ./restored"
+else
+  echo
+  echo "ПОМИЛКА: архів не відкривається введеною фразою." >&2
+  echo "Файл $OUT непридатний — видаліть його і запустіть скрипт заново." >&2
+  exit 1
+fi
