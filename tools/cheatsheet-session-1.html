@@ -263,8 +263,8 @@ Oracle Database 19c Enterprise Edition Release 19.0.0.0.0</pre></div>
 
   <div class="step">ОБОВʼЯЗКОВО: збережіть зʼєднання, інакше Claude Code не підключиться</div>
   <div class="row sh">
-    <pre id="c41b">sql -cloudconfig C:/шлях/до/Wallet.zip /nolog</pre>
-    <span class="note">/nolog — заходимо без логіна, щоб пароль не потрапив у історію команд</span>
+    <pre id="c41b">sql -cloudconfig C:/шлях/до/Wallet.zip //nolog</pre>
+    <span class="note">//nolog — заходимо без логіна, щоб пароль не потрапив у історію. Два слеші обовʼязкові: Git Bash перетворив би /nolog на шлях Windows</span>
     <button class="copy" data-for="c41b">копіювати</button>
   </div>
   <div class="row sql">

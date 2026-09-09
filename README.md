@@ -67,10 +67,14 @@ Claude Code ходить у базу не через ваш термінал, а
 разом із паролем.
 
 ```bash
-sql -cloudconfig C:/шлях/до/Wallet_ACORDTRAIN.zip /nolog
+sql -cloudconfig C:/шлях/до/Wallet_ACORDTRAIN.zip //nolog
 ```
 
 **Очікується:** запрошення `SQL>` без підключення до бази.
+
+> **Чому два слеші.** Git Bash на Windows перетворює аргументи, що починаються
+> з одного `/`, на шляхи Windows — `/nolog` став би `C:/Program Files/Git/nolog`
+> і SQLcl відповів би `Bad Option`. Подвійний слеш це вимикає.
 
 Далі, у цьому ж запрошенні:
 

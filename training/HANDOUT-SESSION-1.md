@@ -23,7 +23,7 @@ Claude Code ходить у базу **не через ваш термінал**
 Відкрийте **Git Bash** (не PowerShell) і виконайте:
 
 ```bash
-sql -cloudconfig C:/шлях/до/Wallet_ACORDTRAIN.zip /nolog
+sql -cloudconfig C:/шлях/до/Wallet_ACORDTRAIN.zip //nolog
 ```
 
 У запрошенні SQLcl:
@@ -35,6 +35,11 @@ connect -save train -savepwd ВАШ_ЛОГІН@acordtrain_low
 Пароль він запитає окремо — так він не осяде в історії команд.
 Прапорець `-savepwd` **обовʼязковий**: без нього зʼєднання створиться, але
 Claude Code ним скористатися не зможе.
+
+> **Чому два слеші в `//nolog`.** Git Bash на Windows перетворює аргументи, що
+> починаються з одного `/`, на шляхи Windows: `/nolog` став би
+> `C:/Program Files/Git/nolog`, і SQLcl відповів би `Bad Option`.
+> Подвійний слеш це вимикає.
 
 ### Крок 2. Перевірте, що зʼєднання збережене
 
