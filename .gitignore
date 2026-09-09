@@ -1,6 +1,11 @@
 # Ніколи не комітимо облікові дані та wallet
 setup/.secrets/
 adb-wallet/
+.wallet/
+CREDENTIALS.txt
+pass.txt
+restored/
+acordbank-secrets.gpg
 wallet.zip
 *.b64
 cwallet.sso
@@ -21,3 +26,28 @@ _grants_generated.sql
 # Комерційний концепт — не для очей учасників навчання.
 # Лишається локально / передається замовнику окремо.
 CONCEPT.md
+DRIVE.md
+SESSIONS.md
+CHECKLIST.md
+
+# Артефакт збірки — перепаковується скриптом
+tools/*.zip
+
+# Матеріали тренера — еталонні розв'язки, учасникам не показуємо
+training/RUNSHEET-*.md
+training/PREFLIGHT.md
+training/check-numbers.py
+
+# Слайди: у них еталонні відповіді й нотатки доповідача
+# Слайди живуть в окремому ПУБЛІЧНОМУ репозиторії
+# github.com/koldovsky/claude-code-oracle-training
+slides/
+
+# Матеріали з обліковими даними — роздаються персонально, не через репозиторій
+tools/TEST-ACCESS*.md
+tools/connect-fix.html
+tools/INSTALL-LOCAL-WINDOWS.md
+tools/PLSQL-DEVELOPER-CONNECT.md
+
+# Робоча тека публікації слайдів — не частина проєкту
+.public-repo/

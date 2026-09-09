@@ -1,0 +1,514 @@
+<title>Сесія 1 · шпаргалка</title>
+<style>
+  :root {
+    --ink-950:#07080B; --ink-900:#0C1014; --ink-850:#11161C; --border:#1E2730; --border-2:#2A3540;
+    --fg-0:#F2F5F7; --fg-1:#C7D1D9; --fg-2:#93A1AC; --fg-3:#6B7A86;
+    --green:#3FD98B; --cyan:#1FC0EC; --amber:#F5A623; --rose:#F4475F;
+    --mono: ui-monospace, "JetBrains Mono", "Cascadia Code", Consolas, monospace;
+    --sans: Inter, ui-sans-serif, system-ui, "Segoe UI", sans-serif;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--ink-950); color:var(--fg-1); font-family:var(--sans); font-size:15px; line-height:1.6; }
+  .wrap { max-width: 1000px; margin:0 auto; padding: 32px 20px 96px; }
+  header { border-bottom:1px solid var(--border); padding-bottom:20px; margin-bottom:8px; }
+  h1 { font-size:30px; color:var(--fg-0); margin:0 0 6px; letter-spacing:-.02em; }
+  h1 span { background:linear-gradient(92deg,#3FD98B,#1FC0EC); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  header p { margin:.3em 0; color:var(--fg-2); }
+  a { color:var(--green); }
+  h2 { font-size:20px; color:var(--fg-0); margin:34px 0 2px; letter-spacing:-.01em; }
+  h3 { font-size:16px; color:var(--fg-0); margin:26px 0 8px; }
+  .tagline { margin:0 0 12px; font-family:var(--mono); font-size:12px; color:var(--fg-3); }
+  .row { position:relative; display:block; margin:7px 0; background:var(--ink-900); border:1px solid var(--border); border-radius:10px; padding:10px 92px 10px 13px; }
+  .row.prompt { border-color:#1b3b48; background:#0A1318; }
+  .row pre { margin:0; font-family:var(--mono); font-size:13px; line-height:1.6; color:var(--fg-1); white-space:pre-wrap; word-break:break-word; }
+  .row.sh pre::before { content:"$ "; color:var(--green); user-select:none; }
+  .row.sql pre::before { content:"SQL> "; color:var(--cyan); user-select:none; }
+  .row.prompt pre::before { content:"› "; color:var(--cyan); user-select:none; }
+  .note { display:block; margin-top:6px; font-family:var(--mono); font-size:11.5px; color:var(--fg-3); }
+  .copy { position:absolute; top:8px; right:8px; font-family:var(--mono); font-size:11px; letter-spacing:.04em;
+          color:var(--green); background:transparent; border:1px solid var(--border-2); border-radius:7px;
+          padding:5px 9px; cursor:pointer; }
+  .copy:hover { background:rgba(63,217,139,.12); border-color:var(--green); }
+  .copy.done { color:var(--ink-950); background:var(--green); border-color:var(--green); }
+  .copy:focus-visible { outline:2px solid var(--cyan); outline-offset:2px; }
+  .expected { margin:10px 0 0; padding:10px 13px; border-left:3px solid var(--green); background:var(--ink-850);
+              border-radius:0 10px 10px 0; font-size:13px; color:var(--fg-1); }
+  .expected b { color:var(--green); font-weight:600; }
+  .expected pre { margin:6px 0 0; font-family:var(--mono); font-size:12.5px; line-height:1.65; color:var(--fg-1);
+                  white-space:pre; overflow-x:auto; }
+  .expected.err { border-left-color:var(--rose); }
+  .expected.err b { color:var(--rose); }
+  .expected.warn { border-left-color:var(--amber); }
+  .expected.warn b { color:var(--amber); }
+  .lead { background:var(--ink-850); border:1px solid var(--border); border-radius:12px; padding:16px 18px; margin:18px 0 6px; }
+  .lead p { margin:0 0 .7em; } .lead p:last-child { margin-bottom:0; }
+  .lead ol, .lead ul { margin:.4em 0 0; padding-left:1.3em; } .lead li { margin:.35em 0; }
+  .tree { font-family:var(--mono); font-size:13px; line-height:1.7; color:var(--fg-1); background:var(--ink-900);
+          border:1px solid var(--border); border-radius:10px; padding:12px 14px; margin:.6em 0 0; white-space:pre; overflow-x:auto; }
+  .tree b { color:var(--green); font-weight:600; }
+  .tree i { color:var(--fg-3); font-style:normal; }
+  nav { position:sticky; top:0; background:rgba(7,8,11,.92); backdrop-filter:blur(6px); border-bottom:1px solid var(--border);
+        margin:0 -20px 0; padding:10px 20px; display:flex; gap:8px; flex-wrap:wrap; z-index:5; }
+  nav a { font-family:var(--mono); font-size:12px; color:var(--fg-2); text-decoration:none; border:1px solid var(--border); border-radius:999px; padding:4px 11px; }
+  nav a:hover { color:var(--green); border-color:var(--green); }
+  .step { font-family:var(--mono); font-size:12px; color:var(--fg-3); letter-spacing:.08em; text-transform:uppercase; margin-top:30px; }
+  footer { margin-top:48px; border-top:1px solid var(--border); padding-top:18px; font-size:13px; color:var(--fg-3); }
+  code { font-family:var(--mono); font-size:.9em; color:var(--cyan); }
+  details { border:1px solid var(--border); border-radius:10px; margin:10px 0 0; background:var(--ink-850); }
+  details summary { cursor:pointer; padding:10px 13px; font-family:var(--mono); font-size:12.5px; color:var(--amber); list-style:none; }
+  details summary::-webkit-details-marker { display:none; }
+  details summary::before { content:"▸ "; }
+  details[open] summary::before { content:"▾ "; }
+  details > *:not(summary) { margin:0 13px 12px; }
+  @media (max-width: 640px) { .row { padding-right:13px; padding-top:34px; } .copy { top:6px; } }
+</style>
+
+<div class="wrap">
+<header>
+  <h1>Сесія 1 · <span>шпаргалка</span></h1>
+  <p>Усі команди й промпти заняття — з кнопкою «копіювати». Нічого не треба передруковувати з екрана.</p>
+  <p class="tagline">під кожною командою — що саме ви маєте побачити. Не збіглося — скажіть тренеру, не йдіть далі.</p>
+  <p class="tagline">ВЕЛИКИМИ ЛІТЕРАМИ позначено те, що ви підставляєте своє: СЕРВІС, ЛОГІН, ПАРОЛЬ, шлях до Wallet.zip. Ці значення видає тренер.</p>
+</header>
+
+<nav>
+  <a href="#s0">0 · перевірка</a>
+  <a href="#s1">1 · каталог</a>
+  <a href="#s2">2 · пошук</a>
+  <a href="#s3">3 · вправа 1</a>
+  <a href="#s4">4 · база</a>
+  <a href="#s5">5 · ізоляція</a>
+  <a href="#s6">6 · вправа 2</a>
+  <a href="#s7">7 · домашка</a>
+</nav>
+
+<section id="s0">
+  <h2>0 · Перевірка перед стартом</h2>
+  <div class="lead">
+    <p>Зробіть це <b>до</b> початку заняття. Якщо щось не працює — напишіть заздалегідь, а не на першій хвилині.</p>
+    <p>Вам потрібні дві речі: каталог <code>db/</code> з репозиторію і файл <code>Wallet.zip</code>.
+    <b>Wallet не розпаковуйте</b> — SQLcl читає його прямо з архіву.</p>
+    <p><b>Усі команди з <code>$</code> виконуйте у Git Bash</b> (Пуск → Git Bash), а не в PowerShell.
+    У PowerShell немає <code>grep</code>, а його замінник <code>Select-String</code> за замовчуванням
+    <b>не розрізняє регістр</b> — на занятті це має значення.</p>
+  </div>
+
+  <div class="row sh">
+    <pre id="c01">claude --version</pre>
+    <span class="note">Claude Code встановлений і ви в нього увійшли</span>
+    <button class="copy" data-for="c01">копіювати</button>
+  </div>
+  <div class="expected"><b>очікується</b> — будь-який номер версії. Важливо лише, що команда відпрацювала: «command not found» означає, що Claude Code не встановлено.</div>
+
+  <div class="row sh">
+    <pre id="c02">sql -V</pre>
+    <span class="note">SQLcl — саме через нього Claude Code ходить у базу</span>
+    <button class="copy" data-for="c02">копіювати</button>
+  </div>
+  <div class="expected"><b>очікується</b> — рядок виду <code>SQLcl: Release 25.x/26.x Production</code>. Конкретна версія значення не має.</div>
+
+  <div class="row sh">
+    <pre id="c03">ls db/CO db/HR</pre>
+    <span class="note">каталог зі схемами — робоче місце перших двох третин заняття</span>
+    <button class="copy" data-for="c03">копіювати</button>
+  </div>
+  <div class="expected"><b>очікується</b><pre>db/CO:
+indexes  tables  views
+
+db/HR:
+indexes  procedures  sequences  tables  triggers  views</pre></div>
+</section>
+
+<section id="s1">
+  <h2>1 · Каталог схеми</h2>
+  <div class="lead">
+    <p>У <code>db/</code> лежить <b>63 файли</b> — уся структура схем HR і CO, вивантажена з бази.
+    Це і є той «матеріал», який ми даємо Claude замість доступу до всієї системи.</p>
+    <div class="tree">db/
+├── <b>CO/</b>              <i>← замовлення: клієнти, товари, відвантаження</i>
+│   ├── tables/       <i>7 таблиць з коментарями до кожної колонки</i>
+│   ├── views/        <i>4 вʼюхи</i>
+│   └── indexes/      <i>18 індексів</i>
+└── <b>HR/</b>              <i>← кадри</i>
+    ├── tables/       <i>7 таблиць</i>
+    ├── views/        <i>1 вʼюха</i>
+    ├── procedures/   <i>2 процедури</i>
+    ├── triggers/     <i>2 тригери — разом із процедурами це весь PL/SQL бази</i>
+    ├── sequences/    <i>3 послідовності</i>
+    └── indexes/      <i>19 індексів</i></div>
+  </div>
+
+  <div class="step">запустіть Claude Code саме в цьому каталозі</div>
+  <div class="row sh">
+    <pre id="c11">claude</pre>
+    <span class="note">запускати з кореня репозиторію, щоб db/ був видимий</span>
+    <button class="copy" data-for="c11">копіювати</button>
+  </div>
+
+  <div class="row prompt">
+    <pre id="c12">Подивись каталог db/ і скажи коротко, що це за схеми. Нічого не змінюй.</pre>
+    <span class="note">перше питання — нічого не редагує</span>
+    <button class="copy" data-for="c12">копіювати</button>
+  </div>
+  <div class="expected"><b>на що дивитись</b> — не на текст відповіді, а на список файлів, які він <b>прочитав</b>. Він нічого не «знав» — він прочитав. Ви можете точно сказати, на чому побудована відповідь.</div>
+</section>
+
+<section id="s2">
+  <h2>2 · Пошук: перша відповідь буває неповною</h2>
+  <div class="lead">
+    <p>Задача: ми збираємось змінити тип колонки <code>CUSTOMER_ID</code> у схемі CO.
+    Треба знати, що зламається.</p>
+  </div>
+
+  <div class="step">крок 1 — як зробить більшість</div>
+  <div class="row sh">
+    <pre id="c21">grep -rl 'CUSTOMER_ID' db/CO/</pre>
+    <span class="note">пошук по імені колонки так, як воно записане в DDL таблиць</span>
+    <button class="copy" data-for="c21">копіювати</button>
+  </div>
+  <div class="expected"><b>очікується — 7 файлів</b><pre>db/CO/indexes/CUSTOMERS_PK.sql
+db/CO/indexes/ORDERS_CUSTOMER_ID_I.sql
+db/CO/indexes/SHIPMENTS_CUSTOMER_ID_I.sql
+db/CO/tables/CUSTOMERS.sql
+db/CO/tables/ORDERS.sql
+db/CO/tables/SHIPMENTS.sql
+db/CO/views/CUSTOMER_ORDER_PRODUCTS.sql</pre></div>
+
+  <div class="step">крок 2 — а тепер без урахування регістру</div>
+  <div class="row sh">
+    <pre id="c22">grep -ril 'customer_id' db/CO/</pre>
+    <span class="note">-i: ignore case. Одна літера у прапорці</span>
+    <button class="copy" data-for="c22">копіювати</button>
+  </div>
+  <div class="expected warn"><b>очікується — 8 файлів</b>, на один більше. Новий саме цей:<pre>db/CO/views/PRODUCT_ORDERS.sql</pre></div>
+
+  <div class="step">крок 3 — подивіться, чому їх не було видно</div>
+  <div class="row sh">
+    <pre id="c23">grep -n 'customer_id' db/CO/views/PRODUCT_ORDERS.sql</pre>
+    <span class="note">у вʼюхах колонка записана малими літерами</span>
+    <button class="copy" data-for="c23">копіювати</button>
+  </div>
+  <div class="expected"><b>очікується</b> — рядок з <code>o.customer_id = c.customer_id</code> малими літерами.
+  Ця вʼюха — рівно те, що зламалося б у продакшені. Перший пошук виглядав вичерпним і був неповним.</div>
+</section>
+
+<section id="s3">
+  <h2>3 · Вправа 1 — наслідки зміни колонки</h2>
+  <div class="lead">
+    <p><b>10 хвилин. Тільки каталог <code>db/</code>, база не потрібна.</b></p>
+    <p>Ми плануємо змінити тип <code>CO.PRODUCTS.PRODUCT_ID</code>.</p>
+    <ol>
+      <li>Знайдіть <b>усі</b> місця, яких це торкнеться</li>
+      <li>Напишіть, що саме зламається в кожному з них</li>
+      <li><b>Як ви переконалися, що нічого не пропустили?</b></li>
+    </ol>
+    <p>Третій пункт — головний. «Знайшов усе» нічого не варте без опису, чому ви так вважаєте.</p>
+  </div>
+
+  <div class="row prompt">
+    <pre id="c31">У каталозі db/CO лежить DDL схеми. Ми плануємо змінити тип колонки PRODUCT_ID у таблиці PRODUCTS.
+
+Знайди всі місця, яких це торкнеться, і для кожного поясни, що саме зламається.
+
+Окремо напиши, як ти перевірив, що нічого не пропустив.</pre>
+    <span class="note">можна працювати і без Claude — просто grep. Але спробуйте порівняти</span>
+    <button class="copy" data-for="c31">копіювати</button>
+  </div>
+  <details>
+    <summary>застрягли? підказка</summary>
+    <div class="expected">Правильна відповідь — <b>9 файлів</b>: 3 таблиці, 4 індекси і <b>2 вʼюхи</b>.
+    Якщо у вас 7 — вʼюхи пропущено, поверніться до розділу 2 і згадайте про регістр.</div>
+  </details>
+
+  <details>
+    <summary>повний ключ — відкривайте після розбору</summary>
+    <div class="expected"><b>Три таблиці</b><pre>PRODUCTS      сама колонка (вона ж identity) + первинний ключ
+ORDER_ITEMS   зовнішній ключ ORDER_ITEMS_PRODUCT_ID_FK + унікальне обмеження
+INVENTORY     зовнішній ключ INVENTORY_PRODUCT_ID_FK + унікальне обмеження</pre></div>
+    <div class="expected"><b>Чотири індекси</b> — перебудуються самі<pre>PRODUCTS_PK
+ORDER_ITEMS_PRODUCT_U
+INVENTORY_PRODUCT_ID_I
+INVENTORY_STORE_PRODUCT_U</pre></div>
+    <div class="expected warn"><b>Дві вʼюхи</b> — <code>PRODUCT_ORDERS</code> і <code>CUSTOMER_ORDER_PRODUCTS</code>.
+    Вони стануть <b>INVALID</b> і перекомпілюються <b>при першому зверненні</b> — тобто зміна пройде
+    успішно, а впаде вночі, у звіті. Це найважливіше тут.</div>
+    <div class="expected"><b>А тепер цікаве.</b> Словник даних знає про <b>три</b> залежні вʼюхи:<pre>select owner, name, type from dba_dependencies
+ where referenced_owner = 'CO' and referenced_name = 'PRODUCTS';</pre>
+    Третя — <code>PRODUCT_REVIEWS</code> — залежить від таблиці, але <b>жодного разу не згадує</b>
+    <code>PRODUCT_ID</code>: вона читає <code>product_details</code> через <code>JSON_TABLE</code>.
+    Від зміни цієї колонки вона не постраждає.
+    <br><br>Тобто текстовий пошук буває <b>завузьким</b> (регістр), а словник — <b>заширшим</b>.
+    Правильна відповідь потребує обох: словник дає кандидатів, читання коду — хто з них справді
+    торкається колонки.</div>
+  </details>
+</section>
+
+<section id="s4">
+  <h2>4 · Підключення до бази</h2>
+  <div class="lead">
+    <p>Один рядок. Wallet читається прямо з архіву — <b>розпаковувати не треба</b>,
+    жодних <code>TNS_ADMIN</code> і правок <code>sqlnet.ora</code>.</p>
+    <p>Підставте свій шлях до wallet, свій логін і свій пароль.</p>
+  </div>
+
+  <div class="row sh">
+    <pre id="c41">sql -cloudconfig C:\шлях\до\Wallet.zip ВАШ_ЛОГІН/ВАШ_ПАРОЛЬ@СЕРВІС</pre>
+    <span class="note">СЕРВІС — саме _low, не _medium і не _high</span>
+    <button class="copy" data-for="c41">копіювати</button>
+  </div>
+  <div class="expected"><b>очікується</b><pre>Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0</pre></div>
+  <div class="expected err"><b>ORA-12506</b> — wallet не підхопився. Найчастіше тому, що архів розпакували і виставили <code>TNS_ADMIN</code>. Приберіть змінну і використайте команду вище як є:<pre>unset TNS_ADMIN</pre></div>
+
+  <div class="step">ОБОВʼЯЗКОВО: збережіть зʼєднання, інакше Claude Code не підключиться</div>
+  <div class="row sh">
+    <pre id="c41b">sql -cloudconfig C:/шлях/до/Wallet.zip /nolog</pre>
+    <span class="note">/nolog — заходимо без логіна, щоб пароль не потрапив у історію команд</span>
+    <button class="copy" data-for="c41b">копіювати</button>
+  </div>
+  <div class="row sql">
+    <pre id="c41c">connect -save train -savepwd ВАШ_ЛОГІН@СЕРВІС</pre>
+    <span class="note">пароль запитає окремо. -savepwd обовʼязковий</span>
+    <button class="copy" data-for="c41c">копіювати</button>
+  </div>
+  <div class="expected warn"><b>навіщо це</b> — Claude Code ходить у базу не через ваш термінал,
+  а через власний процес SQLcl. Вашого відкритого сеансу він не бачить. Без збереженого зʼєднання
+  друга половина заняття (розділ 4, «те саме через Claude Code») <b>не працюватиме</b>.</div>
+  <div class="row sh">
+    <pre id="c41d">sql -S -name train</pre>
+    <span class="note">перевірка: має зайти без запиту пароля</span>
+    <button class="copy" data-for="c41d">копіювати</button>
+  </div>
+
+  <div class="step">хто я</div>
+  <div class="row sql">
+    <pre id="c42">select user from dual;</pre>
+    <button class="copy" data-for="c42">копіювати</button>
+  </div>
+  <div class="expected"><b>очікується</b> — ваш логін, наприклад <code>TRAINEE1</code>. Саме під ним ви бачите свою схему й не бачите чужі.</div>
+
+  <div class="step">контрольні числа — звірте всі три</div>
+  <div class="row sql">
+    <pre id="c43">select count(*) from hr.employees;
+select count(*) from co.orders;
+select count(*) from co.order_items;</pre>
+    <button class="copy" data-for="c43">копіювати</button>
+  </div>
+  <div class="expected"><b>очікується</b><pre>HR.EMPLOYEES     107
+CO.ORDERS      1 950
+CO.ORDER_ITEMS 3 914</pre>
+  Не збіглося — скажіть тренеру одразу.</div>
+
+  <div class="step">те саме, але через Claude Code</div>
+  <div class="row prompt">
+    <pre id="c44">Скільки рядків у HR.EMPLOYEES, CO.ORDERS і CO.ORDER_ITEMS?</pre>
+    <button class="copy" data-for="c44">копіювати</button>
+  </div>
+  <div class="row prompt">
+    <pre id="c45">Покажи SQL, який ти виконав.</pre>
+    <span class="note">друге питання обовʼязкове — завжди</span>
+    <button class="copy" data-for="c45">копіювати</button>
+  </div>
+  <div class="expected warn"><b>звичка на все життя</b> — ніколи не приймайте число, не подивившись на запит, яким воно отримане. Це не недовіра до інструмента, це те саме ревʼю, яке ви робите колезі.</div>
+</section>
+
+<section id="s5">
+  <h2>5 · Ізоляція — спробуйте зламати по-справжньому</h2>
+  <div class="lead">
+    <p>Щоб перевірка щось означала, спершу створіть у <b>своїй</b> схемі таблицю, яку
+    сусід спробує прочитати. Інакше «не існує» нічого не доводить — його не існує й так.</p>
+  </div>
+
+  <div class="step">крок 1 — створіть у себе</div>
+  <div class="row sql">
+    <pre id="c50">create table my_probe (x number);
+insert into my_probe values (42);
+commit;
+select count(*) from my_probe;</pre>
+    <span class="note">у власній схемі ви можете все</span>
+    <button class="copy" data-for="c50">копіювати</button>
+  </div>
+  <div class="expected"><b>очікується</b> — таблиця створена, <code>1</code> рядок. Скажіть сусідові свій логін.</div>
+
+  <div class="step">крок 2 — спробуйте прочитати таблицю СУСІДА</div>
+  <div class="row sql">
+    <pre id="c51">select count(*) from ЛОГІН_СУСІДА.my_probe;</pre>
+    <span class="note">підставте реальний логін: TRAINEE1…TRAINEE5</span>
+    <button class="copy" data-for="c51">копіювати</button>
+  </div>
+  <div class="expected err"><b>очікується відмова</b><pre>ORA-00942: table or view does not exist</pre>
+  Ви точно знаєте, що таблиця є — сусід щойно її створив. Oracle каже «<b>не існує</b>»,
+  а не «немає доступу»: навмисно, щоб не можна було вивідати склад бази.</div>
+
+  <div class="step">крок 3 — спроба записати у спільну схему</div>
+  <div class="row sql">
+    <pre id="c52">create table hr.probe (x number);</pre>
+    <button class="copy" data-for="c52">копіювати</button>
+  </div>
+  <div class="expected err"><b>очікується відмова</b><pre>ORA-01031: insufficient privileges</pre>
+  HR і CO видані лише на читання.</div>
+
+  <div class="step">прибрати за собою</div>
+  <div class="row sql">
+    <pre id="c53">drop table my_probe purge;</pre>
+    <button class="copy" data-for="c53">копіювати</button>
+  </div>
+</section>
+
+<section id="s6">
+  <h2>6 · Вправа 2 — звіт із перевіркою</h2>
+  <div class="lead">
+    <p><b>12 хвилин. Потрібна база.</b></p>
+    <ol>
+      <li>Порахуйте виручку по кожному товару в схемі <code>CO</code></li>
+      <li><b>Звірте свій результат із вʼюхою</b> <code>CO.PRODUCT_ORDERS</code></li>
+      <li>Не збіглося — знайдіть причину</li>
+    </ol>
+    <p><b>Увага на деталь:</b> вʼюха розбита ще й по <code>order_status</code>, тому в ній 109 рядків,
+    а товарів лише 46. Щоб порівнювати, вʼюху треба згорнути.</p>
+  </div>
+
+  <div class="step">контрольне число — сума по вʼюсі</div>
+  <div class="row sql">
+    <pre id="c61">select round(sum(total_sales),2) as view_total from co.product_orders;</pre>
+    <span class="note">незалежне джерело, з яким звіряємось</span>
+    <button class="copy" data-for="c61">копіювати</button>
+  </div>
+  <div class="expected"><b>очікується</b><pre>VIEW_TOTAL
+----------
+ 308598.53</pre></div>
+
+  <div class="step">тепер порахуйте те саме самі</div>
+  <div class="row prompt">
+    <pre id="c62">Порахуй виручку по кожному товару в схемі CO: назва товару і сума.
+Структуру бери з каталогу db/CO — подивись, у якій саме таблиці лежить ціна, за якою продали.
+Потім звір загальну суму з select sum(total_sales) from co.product_orders.</pre>
+    <button class="copy" data-for="c62">копіювати</button>
+  </div>
+  <div class="expected"><b>очікується — топ-5</b><pre>Girl's Trousers (Red)      15 794,76
+Girl's Hoodie (White)      14 283,75
+Women's Trousers (Blue)    12 181,76
+Boy's Coat (Blue)          11 214,71
+Girl's Pyjamas (White)     11 118,60
+
+загальна сума              308 598,53</pre></div>
+
+  <details>
+    <summary>отримали інше число? підказка</summary>
+    <div class="expected warn"><b>Якщо вийшло 313 628,34</b> — ви взяли ціну не з тієї таблиці.
+    <code>UNIT_PRICE</code> існує <b>і в <code>ORDER_ITEMS</code>, і в <code>PRODUCTS</code></b>:
+    перша — скільки клієнт заплатив, друга — скільки товар коштує зараз.
+    Розбіжність лише 1,6%, запит виконується, число правдоподібне. Саме тому ми звіряємось.</div>
+  </details>
+
+  <details>
+    <summary>еталонний запит — відкривайте після того, як спробували самі</summary>
+    <div class="row sql" style="margin:10px 13px">
+      <pre id="c63">select round(sum(oi.quantity * oi.unit_price), 2) as my_total
+  from co.order_items oi
+  join co.products p on oi.product_id = p.product_id;</pre>
+      <button class="copy" data-for="c63">копіювати</button>
+    </div>
+    <div class="expected">дає <code>308598.53</code> — збігається з вʼюхою до копійки.</div>
+  </details>
+
+</section>
+
+<section id="s7">
+  <h2>7 · Домашнє завдання №1</h2>
+  <div class="lead">
+    <p>Візьміть повільний запит — свій робочий або по схемі <code>SH</code> (918 843 рядки в <code>SH.SALES</code>).
+    Знайдіть причину повільності, виправте і <b>доведіть покращення</b>.</p>
+    <p>Оцінюється не «чи стало швидше», а <b>чим ви це довели</b>. Час виконання не приймається:
+    ми всі на спільній базі через <code>_low</code>, тому час залежить від сусідів. Логічні читання і форма плану — ні.</p>
+  </div>
+
+  <div class="step">план виконання</div>
+  <div class="row sql">
+    <pre id="c71">explain plan for
+select p.product_name, sum(oi.quantity * oi.unit_price)
+  from co.order_items oi
+  join co.products p on oi.product_id = p.product_id
+ group by p.product_name;
+
+select * from table(dbms_xplan.display(null, null, 'BASIC'));</pre>
+    <span class="note">приклад на CO — на своєму запиті робіть так само</span>
+    <button class="copy" data-for="c71">копіювати</button>
+  </div>
+  <div class="expected"><b>очікується</b><pre>-------------------------------------------
+| Id  | Operation           | Name        |
+-------------------------------------------
+|   0 | SELECT STATEMENT    |             |
+|   1 |  HASH GROUP BY      |             |
+|   2 |   HASH JOIN         |             |
+|   3 |    TABLE ACCESS FULL| PRODUCTS    |
+|   4 |    TABLE ACCESS FULL| ORDER_ITEMS |
+-------------------------------------------</pre></div>
+
+  <div class="step">план із реальною статистикою виконання</div>
+  <div class="row sql">
+    <pre id="c72">select /*+ gather_plan_statistics */ count(*) from sh.sales;
+
+select * from table(dbms_xplan.display_cursor(format => 'ALLSTATS LAST'));</pre>
+    <span class="note">саме цей формат показує фактичні рядки проти оцінених</span>
+    <button class="copy" data-for="c72">копіювати</button>
+  </div>
+  <div class="expected"><b>очікується</b> — таблиця плану з колонками <code>E-Rows</code> і <code>A-Rows</code>. Велика різниця між ними — типова причина поганого плану.</div>
+
+  <div class="step">логічні читання — головна метрика домашки</div>
+  <div class="row sql">
+    <pre id="c73">select s.name, m.value
+  from v$mystat m
+  join v$statname s on m.statistic# = s.statistic#
+ where s.name = 'session logical reads';</pre>
+    <span class="note">зніміть до і після — різниця і є ваш доказ</span>
+    <button class="copy" data-for="c73">копіювати</button>
+  </div>
+  <div class="expected"><b>очікується</b><pre>session logical reads    2386</pre>
+  Число буде своє. Важлива не величина, а <b>наскільки вона впала</b> після вашої правки.</div>
+
+  <div class="lead" style="margin-top:22px">
+    <p><b>Що здаєте</b> — Pull Request із:</p>
+    <ul>
+      <li>SQL «до» і «після»</li>
+      <li>плани виконання обох</li>
+      <li>логічні читання обох</li>
+      <li><b>які обʼєкти ви дали Claude і чому виключили решту</b></li>
+    </ul>
+    <p>Останній пункт оцінюється нарівні з рештою — саме він переноситься на вашу реальну систему.</p>
+  </div>
+</section>
+
+<footer>
+  Навчальна база · Oracle 19c · регіон Frankfurt · дані виключно синтетичні
+  (демонстраційні схеми Oracle HR, CO, SH). Усі числа на цій сторінці зняті з живої бази під час підготовки заняття.
+</footer>
+</div>
+
+<script>
+  document.querySelectorAll(".copy").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var el = document.getElementById(btn.dataset.for);
+      var text = el.innerText;
+      function done() {
+        btn.textContent = "скопійовано";
+        btn.classList.add("done");
+        setTimeout(function () {
+          btn.textContent = "копіювати";
+          btn.classList.remove("done");
+        }, 1600);
+      }
+      function fallback() {
+        var ta = document.createElement("textarea");
+        ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+        document.body.appendChild(ta); ta.select();
+        try { document.execCommand("copy"); done(); } catch (e) { btn.textContent = "виділіть вручну"; }
+        document.body.removeChild(ta);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, fallback);
+      } else { fallback(); }
+    });
+  });
+</script>

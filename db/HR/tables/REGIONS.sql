@@ -1,0 +1,13 @@
+CREATE TABLE "HR"."REGIONS" 
+   (	"REGION_ID" NUMBER CONSTRAINT "REGION_ID_NN" NOT NULL ENABLE, 
+	"REGION_NAME" VARCHAR2(25) COLLATE "USING_NLS_COMP"
+   )  DEFAULT COLLATION "USING_NLS_COMP" ;
+  CREATE UNIQUE INDEX "HR"."REG_ID_PK" ON "HR"."REGIONS" ("REGION_ID") 
+  ;
+ALTER TABLE "HR"."REGIONS" ADD CONSTRAINT "REG_ID_PK" PRIMARY KEY ("REGION_ID")
+  USING INDEX "HR"."REG_ID_PK"  ENABLE;
+
+COMMENT ON TABLE "HR"."REGIONS" IS 'Regions table that contains region numbers and names. references with the Countries table.';
+COMMENT ON COLUMN "HR"."REGIONS"."REGION_ID" IS 'Primary key of regions table.';
+COMMENT ON COLUMN "HR"."REGIONS"."REGION_NAME" IS 'Names of regions. Locations are in the countries of these regions.';
+
