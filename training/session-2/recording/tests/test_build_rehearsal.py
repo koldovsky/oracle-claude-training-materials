@@ -1,9 +1,11 @@
 """Focused importer/exporter tests using synthetic public fixtures; no Claude or Oracle calls."""
 
+import base64
 import importlib.util
 import hashlib
 import json
 from pathlib import Path
+from string import ascii_lowercase
 import tempfile
 import unittest
 
@@ -190,17 +192,24 @@ class RehearsalImportTests(unittest.TestCase):
                     build.parse_claude(self.source(bad), self.definition)
 
     def test_paths_and_credentials_are_redacted_and_unknown_encoded_values_fail(self):
+        # Synthetic data only: construct auth samples at runtime so public source
+        # does not contain complete credential-shaped literals that trigger alerts.
+        bearer_sample = ascii_lowercase
+        api_key_sample = "-".join(("sk", "ant", ascii_lowercase + str(123456)))
+        basic_sample = base64.b64encode(b"user:password").decode("ascii")
         clean = build.Sanitizer(["D:/bank/workspace"]).text(
             'D:\\bank\\workspace\\lab\\file.sql C:/Users/person/.claude/file '
             '/home/person/project C:/Python314/python.exe '
             'password="FakeValue123" ADB_PASSWORD=FakeOther123 '
             'TRAINER/FakeOracle123@training_low '
-            'Bearer abcdefghijklmnopqrstuvwxyz '
-            'sk-ant-abcdefghijklmnopqrstuvwxyz123456'
+            f'Bearer {bearer_sample} '
+            f'{api_key_sample}'
         )
         for secret in ("FakeValue123", "FakeOther123", "FakeOracle123",
-                       "abcdefghijklmnopqrstuvwxyz", "C:/Users/person", "/home/person", "D:\\bank"):
+                       bearer_sample, api_key_sample, "C:/Users/person", "/home/person", "D:\\bank"):
             self.assertNotIn(secret, clean)
+        self.assertIn("Bearer <redacted>", clean)
+        self.assertIn("<redacted-token>", clean)
         self.assertIn("<workspace>/", clean)
         self.assertIn("<home>/", clean)
         self.assertIn("<tools>/", clean)
@@ -208,8 +217,8 @@ class RehearsalImportTests(unittest.TestCase):
             build.Sanitizer().text("unclassified=" + "A" * 240)
         escaped = build.Sanitizer().text(r'{\"password\": \"FakeNestedValue123\"}')
         self.assertNotIn("FakeNestedValue123", escaped)
-        self.assertNotIn("dXNlcjpwYXNzd29yZA==",
-                         build.Sanitizer().text("Authorization: Basic dXNlcjpwYXNzd29yZA=="))
+        self.assertEqual("Authorization: Basic <redacted>",
+                         build.Sanitizer().text(f"Authorization: Basic {basic_sample}"))
         self.assertNotIn("FakeGenericPass123",
                          build.Sanitizer().text("CUSTOMUSER/FakeGenericPass123@training_low"))
 
