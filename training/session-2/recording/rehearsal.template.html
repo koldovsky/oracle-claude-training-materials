@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>Сесія 2 · самостійний урок</title>
+  <style>
+    :root{--bg:#080d11;--panel:#101920;--terminal:#0b1217;--line:#24333d;--ink:#e7eef2;--dim:#a5b5bf;--faint:#8195a1;--green:#52df9a;--cyan:#57d5e2;--amber:#edbc72;--rose:#f29c98;--mono:ui-monospace,"Cascadia Code",Consolas,monospace;--sans:system-ui,"Segoe UI",sans-serif;--nav-height:80px;color-scheme:dark}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 var(--sans);overflow-wrap:anywhere}button,input,select{font:inherit}button,a,input,select,summary{-webkit-tap-highlight-color:transparent}button{cursor:pointer}button:disabled{cursor:default;opacity:.45}a{color:var(--cyan);text-underline-offset:3px}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--cyan);outline-offset:4px}button:focus:not(:focus-visible){outline:none}.wrap{max-width:1140px;margin:0 auto;padding:0 24px}.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}.skip{position:fixed;left:16px;top:-100px;z-index:30;padding:10px 14px;background:var(--panel)}.skip:focus{top:12px}header{padding:48px 0 32px;border-bottom:1px solid var(--line);background:linear-gradient(150deg,#102324 0%,var(--bg) 70%)}.eyebrow{margin:0 0 12px;color:var(--green);font:12px/1.5 var(--mono);letter-spacing:.13em;text-transform:uppercase}h1{font-size:clamp(30px,4.5vw,48px);line-height:1.12;letter-spacing:-.04em;margin:0 0 20px;max-width:22ch}h1 span{color:var(--green);background:linear-gradient(100deg,var(--green),var(--cyan));background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent}.description{max-width:84ch;color:var(--dim);margin:0 0 22px}.chips{display:flex;flex-wrap:wrap;gap:8px}.chip{font:12px/1.4 var(--mono);color:var(--dim);padding:5px 10px;border:1px solid var(--line);border-radius:6px}.chip.signal{color:var(--green);border-color:#285143}.header-link{display:inline-block;margin-top:20px;font-size:14px}nav{position:sticky;top:0;z-index:10;background:rgba(8,13,17,.97);border-bottom:1px solid var(--line)}nav .wrap{display:flex;flex-wrap:wrap;gap:7px;padding-top:12px;padding-bottom:12px}nav a{font:12px/1.4 var(--mono);padding:6px 10px;border:1px solid var(--line);border-radius:6px;color:var(--dim);text-decoration:none}nav a:hover{color:var(--green);border-color:var(--green)}main{padding-top:30px!important;padding-bottom:50px!important}.intro{border-left:3px solid var(--green);padding:0 0 0 18px;max-width:90ch;color:var(--dim);font-size:14px;margin-bottom:38px}.intro p{margin:0 0 8px}.intro strong{color:var(--ink)}section{scroll-margin-top:calc(var(--nav-height) + 18px);margin:0 0 44px;padding-top:28px;border-top:1px solid var(--line)}.section-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:9px}.section-number{font:13px/1 var(--mono);color:var(--green)}h2{font-size:clamp(22px,3vw,28px);line-height:1.25;letter-spacing:-.025em;margin:0}.slot{font:12px/1.5 var(--mono);color:var(--amber);border:1px solid #5b492e;border-radius:5px;padding:3px 8px}.goal{color:var(--dim);max-width:86ch;margin:0 0 18px}.takeaway{margin:18px 0 0;padding-left:15px;border-left:3px solid var(--green);color:var(--dim);font-size:14px}.takeaway strong{color:var(--green)}.player{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--terminal);min-width:0}.tabs{display:flex;flex-wrap:wrap;gap:0;background:#0d151b;border-bottom:1px solid var(--line)}.tab{background:none;color:var(--dim);text-align:left;padding:13px 17px;border:0;border-right:1px solid var(--line);border-bottom:3px solid transparent;font-size:14px;line-height:1.35;max-width:100%;flex:1 1 180px;min-width:0}.tab:hover{background:#142029;color:var(--ink)}.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--green);background:var(--panel)}.tab small{display:block;color:var(--faint);font:11px/1.5 var(--mono);margin-top:5px}.run-info{padding:15px 18px 13px;border-bottom:1px solid var(--line);background:var(--panel)}.status{display:inline-block;font:12px/1.4 var(--mono);border:1px solid var(--line);border-radius:4px;padding:3px 7px;margin:0 0 8px;color:var(--dim)}.status.success{color:var(--green);border-color:#285143}.status.expected{color:var(--amber);border-color:#5b492e}.status.failure{color:var(--rose);border-color:#694440}.status-note{margin:0 0 8px;font-size:13px;color:var(--dim)}.run-meta{margin:0;color:var(--faint);font:11px/1.6 var(--mono)}.terminal-bar{display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding:10px 18px;background:#090f13;border-bottom:1px solid var(--line)}.terminal-label{font:12px/1.4 var(--mono);color:var(--cyan)}.timing-badge{font:11px/1.4 var(--mono);color:var(--amber);margin-left:auto}.terminal-body{height:clamp(300px,45vh,490px);overflow:auto;overscroll-behavior:contain;padding:20px 18px;scrollbar-color:#36505f var(--terminal);scrollbar-width:thin;outline-offset:-4px!important}.frame{margin:0 0 22px;padding-left:12px;border-left:2px solid #2a3c46;min-width:0}.frame:last-child{margin-bottom:0}.frame.prompt{border-left-color:var(--green)}.frame.tool{border-left-color:var(--cyan)}.frame.assistant{border-left-color:#8aaabe}.frame.hook{border-left-color:var(--amber)}.frame.error{border-left-color:var(--rose)}.frame-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;font:11px/1.4 var(--mono);color:var(--faint)}.frame-kind{color:var(--cyan);text-transform:uppercase;letter-spacing:.07em}.prompt .frame-kind{color:var(--green)}.hook .frame-kind{color:var(--amber)}.error .frame-kind{color:var(--rose)}.frame-time{color:var(--faint)}.frame-tool{color:var(--dim)}.frame-copy{margin-left:auto;border:1px solid var(--line);border-radius:4px;background:none;padding:3px 6px;color:var(--dim);font:10px/1.4 var(--mono)}.frame-copy:hover{color:var(--green);border-color:var(--green)}.frame-text{font:13px/1.7 var(--mono);color:var(--dim);margin:0;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;tab-size:2}.prompt .frame-text{color:var(--ink)}.assistant .frame-text{color:#cfdee8}.error .frame-text{color:#e4ada8}.long-text{font:12px/1.5 var(--mono);margin:0 0 8px}.long-text summary{cursor:pointer;color:var(--cyan);padding:4px 0}.long-text[open]>.frame-text{margin-top:10px}.long-text[open]+.frame-preview{display:none}.empty{color:var(--dim);margin:0}.controls{padding:13px 16px;border-top:1px solid var(--line);background:#101920}.buttons{display:flex;gap:7px;flex-wrap:wrap;align-items:center}.control{border:1px solid #36505f;border-radius:6px;background:#16252e;color:var(--ink);padding:8px 11px;font-size:12px;line-height:1.3;min-height:35px}.control:hover:not(:disabled){border-color:var(--cyan);color:var(--cyan)}.control.primary{border-color:#3b8f6e;background:#17372c;color:#a9f5cf;min-width:132px}.timeline{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px}.scrub{flex:1 1 180px;min-width:0;max-width:100%;accent-color:var(--green);height:24px;cursor:pointer}.position{font:12px/1.4 var(--mono);color:var(--dim);font-variant-numeric:tabular-nums;min-width:92px}.speed-label{font-size:12px;color:var(--dim);display:flex;gap:6px;align-items:center}.speed{background:#16252e;border:1px solid #36505f;border-radius:5px;color:var(--ink);padding:5px;font-size:12px;min-height:32px}.timing-note{font-size:12px;color:var(--faint);margin:11px 0 0;max-width:100ch}.metrics{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));margin:0;background:#0a1116;border-top:1px solid var(--line)}.metric{min-width:0;margin:0;padding:15px 14px;border-right:1px solid var(--line)}.metric:last-child{border-right:0}.metric dt{color:var(--faint);font:10px/1.5 var(--mono);text-transform:uppercase;letter-spacing:.045em;min-height:30px}.metric dd{margin:7px 0 0;color:var(--ink);font:17px/1.3 var(--mono);font-variant-numeric:tabular-nums}.metric-help{font-size:12px;color:var(--faint);padding:12px 16px;background:#0a1116;border-top:1px solid var(--line)}.metric-help summary{cursor:pointer;color:var(--dim)}.metric-help p{margin:9px 0 0}.method p,.method li{color:var(--dim);max-width:90ch;font-size:14px}.method ul{padding-left:22px}.method li{margin:12px 0}footer{padding:24px 0 40px;color:var(--faint);font-size:13px;border-top:1px solid var(--line)}footer p{margin:0 0 8px}.error-box{padding:20px;border:1px solid var(--rose);color:var(--rose);border-radius:8px}.loading{color:var(--dim)}
+    @media(max-width:800px){.metrics{grid-template-columns:repeat(3,minmax(0,1fr))}.metric{border-bottom:1px solid var(--line)}.metric:nth-child(3n){border-right:0}.metric:nth-last-child(-n+3){border-bottom:0}}
+    @media(max-width:480px){.wrap{padding-left:16px;padding-right:16px}header{padding:32px 0 24px}nav .wrap{gap:5px;padding-top:9px;padding-bottom:9px}nav a{font-size:11px;padding:6px 8px}main{padding-top:24px!important}.section-head{gap:8px}.tab{flex-basis:145px;padding:11px 12px}.run-info,.terminal-bar{padding-left:13px;padding-right:13px}.terminal-body{padding:16px 12px;height:370px;max-height:60vh;min-height:240px}.frame{padding-left:9px}.frame-text{font-size:12px}.controls{padding:12px}.control{padding:8px 9px}.control.primary{min-width:120px}.timeline{gap:8px}.scrub{flex-basis:100%}.timing-badge{margin-left:0}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.metric{padding:13px 12px;border-right:1px solid var(--line)!important;border-bottom:1px solid var(--line)!important}.metric:nth-child(2n){border-right:0!important}.metric:nth-last-child(-n+2){border-bottom:0!important}.metric dt{min-height:30px}.frame-copy{margin-left:0}}
+    .lesson-section{padding-top:28px}.lesson-content{max-width:94ch}.lesson-content>p,.lesson-content>ul,.lesson-content>ol{margin:12px 0 18px;color:var(--dim)}.lesson-content h3{font-size:19px;line-height:1.35;color:var(--ink);margin:26px 0 12px}.lesson-content li{margin:8px 0}.lesson-content ul,.lesson-content ol{padding-left:25px}.lesson-content strong{color:var(--ink)}.lesson-fold{border:1px solid var(--line);border-radius:9px;background:#0e171d;margin:16px 0;min-width:0}.lesson-fold>summary{padding:14px 16px;cursor:pointer;color:var(--ink);font-size:15px;line-height:1.5}.lesson-fold>summary::marker{color:var(--green)}.fold-body{padding:0 16px 8px}.fold-body>:first-child{margin-top:10px}.lesson-callout{border-left:3px solid var(--cyan);background:#102027;padding:14px 17px;margin:18px 0;border-radius:0 8px 8px 0}.lesson-callout h3{font-size:15px;margin:0 0 7px;color:var(--cyan)}.lesson-callout p{margin:0;color:var(--dim);font-size:14px}.lesson-code{margin:18px 0;border:1px solid #31424c;border-radius:8px;overflow:hidden;background:#080e13}.code-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 12px;border-bottom:1px solid var(--line);background:#111e26}.code-language{font:11px/1.5 var(--mono);color:var(--cyan)}.code-copy{border:1px solid #36505f;border-radius:5px;padding:6px 9px;background:#16252e;color:var(--ink);font-size:12px}.code-copy:hover{border-color:var(--cyan)}.lesson-code pre{margin:0;padding:15px;max-height:580px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;tab-size:2;font:12px/1.7 var(--mono);color:#d2e4ed}.lesson-code code{font:inherit}.code-status{font-size:12px;color:var(--green)}.table-scroll{max-width:100%;overflow:auto;border:1px solid var(--line);border-radius:8px;margin:18px 0;scrollbar-color:#36505f var(--terminal)}.lesson-table{width:100%;border-collapse:collapse;min-width:340px;text-align:left;font-size:13px}.lesson-table th,.lesson-table td{padding:11px 13px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);vertical-align:top;overflow-wrap:anywhere}.lesson-table th{background:#14242c;color:var(--ink);font-weight:600}.lesson-table td{color:var(--dim)}.lesson-table th:last-child,.lesson-table td:last-child{border-right:0}.lesson-table tr:last-child td{border-bottom:0}.lesson-label{display:inline-block;font:11px/1.5 var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--green);margin:0 0 9px}.lesson-before{margin:20px 0}.lesson-after{margin:22px 0 0}.overview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:20px 0}.overview a{border:1px solid var(--line);border-radius:8px;padding:13px 15px;background:#0e181e;text-decoration:none;font-size:14px;line-height:1.45;color:var(--ink)}.overview a span{display:block;color:var(--green);font:11px/1.5 var(--mono);margin-bottom:5px}.overview a:hover{border-color:var(--green)}.lesson-toolbar{display:flex;gap:8px;flex-wrap:wrap;padding:15px 0 7px}.lesson-toolbar .control{background:#0f1c23}.toolbar-note{font-size:12px;color:var(--faint);margin:3px 0 18px}.recording-fold{border:1px dashed #3b5965;border-radius:10px;margin:24px 0;min-width:0}.recording-fold>summary{cursor:pointer;padding:15px 17px;color:var(--cyan);font-size:14px;font-weight:600;line-height:1.5}.recording-fold>summary::marker{color:var(--cyan)}.recording-fold[open]>summary{border-bottom:1px dashed #3b5965}.recording-content{padding:15px}.recording-note{color:var(--faint);font-size:13px;margin:0 0 15px}.practice-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:18px 0}.practice-actions .control{font-size:14px;padding:10px 14px}.download-status{font-size:13px;color:var(--dim);margin:0}.lesson-link{margin:14px 0}.print-note{display:none}
+    .lesson-table th{overflow-wrap:normal;word-break:normal}
+    @media(max-width:800px){.overview{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:480px){.lesson-content h3{font-size:18px}.lesson-fold>summary{padding:12px}.fold-body{padding:0 12px 6px}.lesson-code pre{padding:12px;font-size:11px}.overview{gap:7px}.overview a{font-size:12px;padding:11px}.recording-content{padding:8px}.recording-fold>summary{padding:12px}.lesson-callout{padding:12px 14px}.lesson-toolbar .control{flex:1 1 145px}}
+    @media print{:root{--bg:white;--ink:#111;--dim:#222;--faint:#444;--line:#bbb;--green:#145f43;--cyan:#155768}html{scroll-behavior:auto}body{background:white;color:#111;font-size:11pt}.wrap{max-width:none;padding:0}header{padding:0 0 20px;background:none}h1 span{-webkit-text-fill-color:#111;background:none}h1{font-size:27pt}nav,.lesson-toolbar,.toolbar-note,.code-copy,.code-status,.practice-actions,.recording-fold,.intro,.chips,.skip,footer{display:none!important}.print-note{display:block;border:1px solid #888;padding:10px;font-size:10pt;color:#333}.overview{grid-template-columns:repeat(3,minmax(0,1fr))}.overview a,.lesson-fold,.lesson-callout,.lesson-code,.code-bar,.lesson-table th{background:white;color:#111}.lesson-fold>summary{font-weight:bold}.lesson-fold{break-inside:auto}.lesson-code pre{max-height:none;overflow:visible;color:#111;font-size:9pt}.lesson-table{min-width:0}.table-scroll{overflow:visible}section{margin-bottom:24px}h2,h3,summary{break-after:avoid}.lesson-code,.lesson-callout,table{break-inside:avoid}a{color:#155768;text-decoration:none}.method p,.method li{color:#333}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important}}
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip">Перейти до записів</a>
+  <header><div class="wrap">
+    <p class="eyebrow">Claude Code · Oracle · матеріал для самостійної роботи</p>
+    <h1><span id="page-title">Самостійний урок · сесія 2</span></h1>
+    <p class="description" id="description"></p>
+    <div class="chips" id="summary"></div>
+  </div></header>
+  <nav aria-label="Розділи запису" id="navigation"><div class="wrap" id="nav-links"></div></nav>
+  <main class="wrap" id="main" tabindex="-1">
+    <p class="print-note">Версія для друку містить пояснення й приклади уроку. Інтерактивні записи та завантаження практики доступні в оригінальному HTML-файлі.</p>
+    <div id="lesson-start"></div>
+    <div class="intro">
+      <p><strong>Тут відтворюються збережені кадри.</strong> Кнопки плеєра показують запис і не запускають Claude, SQL чи підключення до бази.</p>
+      <p>Вкладки містять окремі прогони. Почніть із промпту, проходьте кадри вручну або ввімкніть відтворення. Довгі відповіді можна розгорнути, скопіювати повністю та завантажити.</p>
+      <p>Позначка біля термінала пояснює, чи записано час кадрів. Умовний темп показу не є часом оригінального запуску.</p>
+    </div>
+    <div id="sections"><p class="loading">Завантаження вбудованих кадрів…</p></div>
+    <div id="lesson-end"></div>
+    <section class="method" id="method" aria-labelledby="method-title">
+      <div class="section-head"><h2 id="method-title">Метод і межі запису</h2></div>
+      <ul id="method-list"></ul>
+      <p>У завантаженому транскрипті містяться всі опубліковані кадри вибраного прогону, включно зі згорнутим текстом. Плеєр використовує тільки вбудовані дані й не надсилає мережевих запитів.</p>
+    </section>
+    <noscript><p class="error-box">Для відтворення кадрів потрібен JavaScript. <a href="cheatsheet-session-2.html">Шпаргалка з командами</a> доступна окремо.</p></noscript>
+  </main>
+  <footer><div class="wrap"><p>Claude Code для Oracle · матеріали сесії 2</p><a href="cheatsheet-session-2.html">Шпаргалка</a></div></footer>
+  <!-- Builder must encode every literal < as \u003c in this JSON, including </script in frame text. -->
+  <script id="rehearsal-data" type="application/json">__REHEARSAL_DATA__</script>
+  <script>
+  (() => {
+    'use strict';
+    const text = value => value == null ? '' : String(value);
+    const number = value => typeof value === 'number' && Number.isFinite(value) && value >= 0;
+    const countFormat = new Intl.NumberFormat('uk-UA', {maximumFractionDigits:0});
+    const secondsFormat = new Intl.NumberFormat('uk-UA', {maximumFractionDigits:2});
+    const costFormat = new Intl.NumberFormat('uk-UA', {minimumFractionDigits:4,maximumFractionDigits:6});
+    const fmtCount = value => number(value) ? countFormat.format(value) : '—';
+    const fmtSeconds = value => number(value) ? secondsFormat.format(value) + ' с' : '—';
+    const fmtCost = value => number(value) ? '$' + costFormat.format(value) : '—';
+    const kinds = {prompt:'Промпт',tool:'Інструмент',result:'Результат',assistant:'Відповідь',hook:'Hook'};
+    const node = (tag, className, content) => {
+      const element = document.createElement(tag);
+      if(className) element.className = className;
+      if(content !== undefined) element.textContent = text(content);
+      return element;
+    };
+    const button = (label, className, handler, ariaLabel) => {
+      const element = node('button', className, label);
+      element.type = 'button';
+      if(ariaLabel) element.setAttribute('aria-label', ariaLabel);
+      element.addEventListener('click', handler);
+      return element;
+    };
+    let data;
+    try {
+      data = JSON.parse(document.getElementById('rehearsal-data').textContent);
+      if(data.schemaVersion !== 1 || !Array.isArray(data.sections) || !Array.isArray(data.runs)) throw new Error('schema');
+    } catch (_) {
+      const error = node('p','error-box','Дані запису недоступні. Відкрийте повний збережений HTML-файл.');
+      error.setAttribute('role','alert');
+      document.getElementById('sections').replaceChildren(error);
+      return;
+    }
+    const lesson = data.lesson && typeof data.lesson === 'object' ? data.lesson : null;
+    document.title = lesson ? 'Самостійний урок · сесія 2' : (text(data.title) || 'Сесія 2 · запис репетиції');
+    document.getElementById('page-title').textContent = document.title;
+    document.getElementById('description').textContent = text(data.description);
+    const summary = document.getElementById('summary');
+    if(data.date) summary.append(node('span','chip', 'Записано: ' + text(data.date)));
+    summary.append(node('span','chip', data.sections.length + ' розділів'), node('span','chip', data.runs.length + ' прогонів'), node('span','chip signal','Офлайн-відтворення'));
+    const runMap = new Map(data.runs.map(run => [text(run.id), run]));
+    const containers = document.getElementById('sections');
+    containers.replaceChildren();
+    const navigation = document.getElementById('nav-links');
+    const players = [];
+    let activePlayer = null;
+
+    function timingFor(run, frames) {
+      const recorded = run.timing === 'recorded' && frames.length > 0 && frames.every((frame,index) => number(frame.elapsed) && (index === 0 || frame.elapsed >= frames[index-1].elapsed));
+      return recorded ? {
+        label:'Записані часові мітки',
+        note:'Час кадрів збережено під час прогону. Темп ×1 відтворює інтервали між ними; швидкість плеєра не змінює виміряні метрики.',
+        delay:(current,next) => Math.max(0,(frames[next].elapsed - frames[current].elapsed) * 1000)
+      } : {
+        label:'Умовний темп показу',
+        note:'Повних часових міток кадрів немає. Пауза залежить від довжини тексту; темп ×1 призначено для читання й не відтворює тривалість оригінального запуску.',
+        delay:(_current,next) => 650 + Math.min(1700,text(frames[next].text).length * 2)
+      };
+    }
+    async function copyText(value) {
+      try { await navigator.clipboard.writeText(value); return true; } catch (_) {
+        const focus = document.activeElement;
+        const field = node('textarea');
+        field.value = value;
+        field.setAttribute('aria-label','Текст для копіювання');
+        field.style.cssText = 'position:fixed;top:0;left:0;opacity:0;width:1px;height:1px';
+        document.body.append(field);
+        field.select();
+        let copied = false;
+        try { copied = document.execCommand('copy'); } catch (_) {}
+        field.remove();
+        if(focus && typeof focus.focus === 'function') focus.focus({preventScroll:true});
+        return copied;
+      }
+    }
+    function saveBlob(blob, filename) {
+      const url = URL.createObjectURL(blob);
+      const link = node('a');
+      link.href = url; link.download = filename;
+      document.body.append(link); link.click(); link.remove();
+      setTimeout(() => URL.revokeObjectURL(url),1000);
+    }
+    function makeCode(block) {
+      const box = node('div','lesson-code');
+      const bar = node('div','code-bar');
+      const language = text(block.language) || 'текст';
+      const value = text(block.text);
+      const status = node('span','code-status');
+      status.setAttribute('role','status'); status.setAttribute('aria-live','polite');
+      const copy = button('Копіювати','code-copy',async () => {
+        const copied = await copyText(value);
+        status.textContent = copied ? 'Скопійовано повністю' : 'Виділіть текст і скопіюйте вручну';
+        copy.textContent = copied ? 'Скопійовано' : 'Копіювати';
+        setTimeout(() => {copy.textContent='Копіювати';status.textContent='';},2500);
+      },'Копіювати приклад коду: '+language);
+      bar.append(node('span','code-language',language),status,copy);
+      const pre = node('pre'); pre.append(node('code','',value));
+      box.append(bar,pre); return box;
+    }
+    function renderBlocks(blocks, target) {
+      if(!Array.isArray(blocks)) return;
+      blocks.forEach(block => {
+        if(!block || typeof block !== 'object') return;
+        if(block.type === 'p') target.append(node('p','',block.text));
+        else if(block.type === 'heading') target.append(node('h3','',block.text));
+        else if(block.type === 'list' || block.type === 'steps') {
+          const list = node(block.type === 'steps' ? 'ol' : 'ul');
+          (Array.isArray(block.items)?block.items:[]).forEach(item => list.append(node('li','',item)));
+          target.append(list);
+        } else if(block.type === 'code') target.append(makeCode(block));
+        else if(block.type === 'table') {
+          const wrapper = node('div','table-scroll');
+          wrapper.tabIndex = 0; wrapper.setAttribute('role','region');
+          wrapper.setAttribute('aria-label',text(block.title)||'Навчальна таблиця; за потреби прокрутіть горизонтально');
+          const table = node('table','lesson-table');
+          const head = node('thead'); const headerRow = node('tr');
+          (Array.isArray(block.headers)?block.headers:[]).forEach(value => {const th=node('th','',value);th.scope='col';headerRow.append(th);});
+          head.append(headerRow); table.append(head);
+          const body = node('tbody');
+          (Array.isArray(block.rows)?block.rows:[]).forEach(row => {
+            const tr = node('tr');
+            (Array.isArray(row)?row:[]).forEach(value => tr.append(node('td','',value)));
+            body.append(tr);
+          });
+          table.append(body);wrapper.append(table);target.append(wrapper);
+        } else if(block.type === 'callout') {
+          const callout = node('aside','lesson-callout');
+          if(block.title) callout.append(node('h3','',block.title));
+          callout.append(node('p','',block.text));target.append(callout);
+        } else if(block.type === 'details' || block.type === 'source') {
+          const fold = node('details','lesson-fold');fold.open = block.open === true;
+          fold.append(node('summary','',block.title || (block.type === 'source' ? 'Повний файл прикладу' : 'Докладніше')));
+          const body = node('div','fold-body lesson-content');
+          if(block.type === 'source') body.append(makeCode(block));
+          else renderBlocks(block.blocks,body);
+          fold.append(body); target.append(fold);
+        } else if(block.type === 'link') {
+          const href = text(block.url), anchor = /^#[a-zA-Z0-9_-]+$/.test(href);
+          let url;
+          if(!anchor) {
+            try {url = new URL(href);} catch (_) {return;}
+            if(url.protocol !== 'https:' || url.username || url.password || /[\\\s]/.test(href)) return;
+          }
+          const paragraph = node('p','lesson-link');
+          const link = node('a','',block.text || (anchor ? href : url.hostname));
+          link.href = anchor ? href : url.href;link.rel='noopener noreferrer';
+          paragraph.append(link);target.append(paragraph);
+        }
+      });
+    }
+    const shortNames = {baseline:'Початок',skill:'Skill',agents:'Агенти',hook:'Hook',refactor:'Рефакторинг',mcp:'MCP'};
+    const sectionKeys = ['baseline','skill','agents','hook','refactor','mcp'];
+    const sectionKey = (section,index) => Object.hasOwn(shortNames,text(section.id)) ? text(section.id) : sectionKeys[index];
+    function addNav(label,id) {
+      const link=node('a','',label);link.href='#'+id;navigation.append(link);
+    }
+    function titledSection(id,title) {
+      const element=node('section','lesson-section');element.id=id;
+      const heading=node('h2','',title);heading.id=id+'-title';
+      element.setAttribute('aria-labelledby',heading.id);element.append(heading);return element;
+    }
+    function foldContent(title,blocks,open=false) {
+      const fold=node('details','lesson-fold');fold.open=open;
+      fold.append(node('summary','',title));
+      const body=node('div','fold-body lesson-content');renderBlocks(blocks,body);fold.append(body);return fold;
+    }
+    function renderLessonStart() {
+      if(!lesson) return;
+      const start=document.getElementById('lesson-start');
+      const intro=titledSection('lesson',lesson.intro?.title || 'Як пройти цей урок');
+      const content=node('div','lesson-content');renderBlocks(lesson.intro?.blocks,content);intro.append(content);
+      const overview=node('div','overview');overview.setAttribute('aria-label','Шість кроків уроку');
+      data.sections.forEach((section,index) => {
+        const link=node('a');link.href='#section-'+(index+1);
+        link.append(node('span','',String(index+1).padStart(2,'0')+' · '+(text(section.slot)||'Крок уроку')),document.createTextNode(text(section.title)));
+        overview.append(link);
+      });
+      intro.append(overview);
+      const toolbar=node('div','lesson-toolbar');toolbar.setAttribute('role','group');toolbar.setAttribute('aria-label','Відображення пояснень');
+      const setFolds=open => document.querySelectorAll('.lesson-fold').forEach(fold => {fold.open=open;});
+      toolbar.append(button('Розгорнути пояснення','control',()=>setFolds(true)),button('Згорнути пояснення','control',()=>setFolds(false)),button('Друкувати урок','control',()=>window.print()));
+      intro.append(toolbar,node('p','toolbar-note','Ці кнопки змінюють лише пояснення й довідкові файли. Записи та довгі кадри відкриваються окремо.'));
+      start.append(intro);addNav('Огляд','lesson');
+      if(lesson.preparation) {
+        const prep=titledSection('preparation',lesson.preparation.title || 'Підготовка');
+        prep.append(foldContent('Середовище, файли та початкові перевірки',lesson.preparation.blocks));
+        start.append(prep);addNav('Підготовка','preparation');
+      }
+    }
+    function addPracticeDownload(container) {
+      const archive=data.practiceArchive;
+      if(!archive || typeof archive.base64 !== 'string' || !archive.base64) return;
+      const actions=node('div','practice-actions');
+      const status=node('p','download-status','ZIP вбудовано в цю сторінку. Завантаження працює без мережі.');
+      status.setAttribute('role','status');status.setAttribute('aria-live','polite');
+      const download=button('↓ Завантажити практику · ZIP','control primary',()=> {
+        try {
+          const raw=atob(archive.base64);const bytes=new Uint8Array(raw.length);
+          for(let index=0;index<raw.length;index++) bytes[index]=raw.charCodeAt(index);
+          const filename=(text(archive.filename).replace(/[^a-zA-Z0-9._-]/g,'_')||'session-2-practice.zip').replace(/^\.+/,'');
+          saveBlob(new Blob([bytes],{type:'application/zip'}),filename || 'session-2-practice.zip');
+          status.textContent='Архів підготовлено до завантаження з вбудованих даних.';
+        } catch (_) {status.textContent='Вбудований архів пошкоджено. Відкрийте повний збережений HTML-файл.';}
+      },'Завантажити вбудований архів практичних файлів ZIP');
+      actions.append(download,status);container.append(actions);
+    }
+    function renderLessonEnd() {
+      if(!lesson && !data.practiceArchive) return;
+      const end=document.getElementById('lesson-end');
+      if(lesson?.closing || data.practiceArchive) {
+        const practice=titledSection('practice',lesson?.closing?.title || 'Самостійна практика');
+        addPracticeDownload(practice);
+        if(lesson?.closing) practice.append(foldContent('Завдання, самоперевірка та наступні кроки',lesson.closing.blocks));
+        end.append(practice);addNav('Практика','practice');
+      }
+      if(lesson?.glossary) {
+        const glossary=titledSection('glossary',lesson.glossary.title || 'Словник');
+        glossary.append(foldContent('Терміни й короткі пояснення',lesson.glossary.blocks));
+        end.append(glossary);addNav('Словник','glossary');
+      }
+    }
+    function transcript(run, frames, timing) {
+      const lines = [document.title,text(run.title),text(run.subtitle),'Статус: '+text(run.status),'Джерело: '+text(run.sourceName),'Модель: '+(text(run.model)||'—'),'Версія: '+(text(run.version)||'—'),'Відтворення: '+timing.label,''];
+      frames.forEach((frame,index) => {
+        const clock = number(frame.elapsed) ? ' · t+'+fmtSeconds(frame.elapsed) : '';
+        lines.push('=== '+(index+1)+' · '+(kinds[frame.kind]||'Кадр')+(frame.tool?' · '+text(frame.tool):'')+clock+(frame.error?' · повідомлення про помилку':'')+' ===',text(frame.text),'');
+      });
+      return lines.join('\n');
+    }
+    function makePlayer(section, runs, sectionIndex) {
+      const player = node('div','player');
+      const tabs = node('div','tabs');
+      tabs.setAttribute('role','tablist');
+      tabs.setAttribute('aria-label','Прогони: '+text(section.title));
+      const panel = node('div','run-panel');
+      panel.id = 'run-panel-'+sectionIndex;
+      panel.setAttribute('role','tabpanel');
+      const info = node('div','run-info');
+      const status = node('p','status');
+      const statusNote = node('p','status-note');
+      const meta = node('p','run-meta');
+      info.append(status,statusNote,meta);
+      const bar = node('div','terminal-bar');
+      const caption = node('span','terminal-label');
+      const timingBadge = node('span','timing-badge');
+      bar.append(caption,timingBadge);
+      const screen = node('div','terminal-body');
+      screen.setAttribute('role','region');
+      screen.setAttribute('tabindex','0');
+      const live = node('p','sr-only');
+      live.setAttribute('role','status');
+      live.setAttribute('aria-live','polite');
+      live.setAttribute('aria-atomic','true');
+      const controls = node('div','controls');
+      const buttons = node('div','buttons');
+      const play = button('▶ Відтворити','control primary', () => state.playing ? pause() : start());
+      const first = button('⏮ Початок','control', () => seek(0), 'До першого кадру');
+      const previous = button('← Кадр','control', () => seek(state.position-1), 'Попередній кадр');
+      const next = button('Кадр →','control', () => seek(state.position+1), 'Наступний кадр');
+      const last = button('Кінець ⏭','control', () => seek(frames.length-1), 'До останнього кадру');
+      const showAll = button('Показати все','control', () => seek(frames.length-1,'top'), 'Показати всі кадри прогону');
+      const download = button('Транскрипт .txt','control', () => {
+        const blob = new Blob([transcript(run,frames,timing)],{type:'text/plain;charset=utf-8'});
+        const url = URL.createObjectURL(blob);
+        const link = node('a');
+        link.href = url;
+        link.download = (text(run.id).replace(/[^a-zA-Z0-9_-]/g,'_') || 'rehearsal')+'.txt';
+        document.body.append(link);
+        link.click();
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(url),1000);
+      }, 'Завантажити всі опубліковані кадри цього прогону');
+      buttons.append(play,first,previous,next,last,showAll,download);
+      const timeline = node('div','timeline');
+      const scrub = node('input','scrub');
+      scrub.type = 'range'; scrub.min = '0'; scrub.max = '0'; scrub.step = '1'; scrub.value = '0';
+      scrub.setAttribute('aria-label','Поточний кадр прогону');
+      scrub.addEventListener('input', () => seek(Number(scrub.value)));
+      const position = node('span','position');
+      const speedLabel = node('label','speed-label','Темп');
+      const speed = node('select','speed');
+      speed.setAttribute('aria-label','Швидкість показу кадрів');
+      [[.5,'×0,5'],[1,'×1'],[2,'×2'],[4,'×4']].forEach(([value,label]) => {
+        const option = node('option','',label); option.value = String(value); option.selected = value === 1; speed.append(option);
+      });
+      speed.addEventListener('change', () => {if(state.playing) {clearTimeout(state.timer); schedule();}});
+      speedLabel.append(speed);
+      timeline.append(scrub,position,speedLabel);
+      const timingNote = node('p','timing-note');
+      controls.append(buttons,timeline,timingNote);
+      const meters = node('dl','metrics');
+      meters.setAttribute('aria-label','Метрики з джерела запису');
+      const help = node('details','metric-help');
+      help.append(node('summary','','Як читати метрики'));
+      help.append(node('p','','Вхідні токени — сума input, cache creation і cache read за всіма викликами прогону. Це не розмір одного контекстного вікна. «Перший запит» показує вхід із кешем лише першого виклику.'));
+      help.append(node('p','','Час і вартість беруться з джерела запису; паузи плеєра на них не впливають. «—» означає відсутнє значення, а 0 — записаний нуль. Для SQLcl токенні метрики можуть бути відсутні.'));
+      panel.append(info,bar,screen,controls,meters,help,live);
+      player.append(tabs,panel);
+      let run, frames = [], timing;
+      const state = {selected:0,position:-1,playing:false,timer:null,rendered:0,expanded:new Set()};
+      const api = {pause};
+      function pause() {
+        clearTimeout(state.timer); state.timer = null; state.playing = false;
+        if(activePlayer === api) activePlayer = null;
+        play.textContent = '▶ Відтворити'; play.setAttribute('aria-label','Відтворити кадри');
+      }
+      function appendFrame(frame,index) {
+        const kind = kinds[frame.kind] ? frame.kind : 'result';
+        const article = node('article','frame '+kind+(frame.error?' error':''));
+        const head = node('div','frame-head');
+        head.append(node('span','frame-kind',kinds[kind]),node('span','frame-time','#'+(index+1)));
+        if(frame.tool) head.append(node('span','frame-tool',frame.tool));
+        if(number(frame.elapsed)) head.append(node('span','frame-time','t+'+fmtSeconds(frame.elapsed)));
+        if(frame.error) head.append(node('span','frame-time','повідомлення про помилку'));
+        const value = text(frame.text);
+        const copy = button('Копіювати','frame-copy',async () => {
+          const copied = await copyText(value);
+          copy.textContent = copied ? 'Скопійовано' : 'Недоступно';
+          live.textContent = copied ? 'Кадр '+(index+1)+' скопійовано повністю.' : 'Буфер обміну недоступний. Завантажте транскрипт або виділіть текст.';
+          setTimeout(() => {copy.textContent='Копіювати';},1600);
+        },'Копіювати повний текст кадру '+(index+1));
+        head.append(copy); article.append(head);
+        if(value.length > 4000 || value.split('\n').length > 60) {
+          const details = node('details','long-text');
+          details.open = state.expanded.has(index);
+          details.append(node('summary','','Розгорнути повний кадр · '+fmtCount(value.length)+' символів'),node('pre','frame-text',value));
+          details.addEventListener('toggle', () => {if(details.open) state.expanded.add(index); else state.expanded.delete(index);});
+          const preview = value.slice(0,1600);
+          article.append(details,node('pre','frame-text frame-preview',preview+'\n[… повний текст у розгортанні, копії та завантаженні]'));
+        } else article.append(node('pre','frame-text',value));
+        screen.append(article);
+      }
+      function render(scroll = 'bottom') {
+        const wanted = state.position + 1;
+        if(state.rendered > wanted) {screen.replaceChildren(); state.rendered = 0;}
+        while(state.rendered < wanted) {appendFrame(frames[state.rendered],state.rendered);state.rendered++;}
+        if(!frames.length && !screen.childElementCount) screen.append(node('p','empty','У цьому записі немає опублікованих кадрів.'));
+        scrub.value = String(Math.max(0,state.position));
+        scrub.setAttribute('aria-valuetext',frames.length ? 'Кадр '+wanted+' з '+frames.length : 'Кадрів немає');
+        position.textContent = wanted+' / '+frames.length+' кадрів';
+        first.disabled = previous.disabled = state.position <= 0;
+        next.disabled = last.disabled = state.position >= frames.length-1;
+        play.disabled = frames.length < 2;
+        showAll.disabled = download.disabled = scrub.disabled = !frames.length;
+        if(scroll === 'top') screen.scrollTop = 0;
+        else if(scroll === 'bottom') screen.scrollTop = screen.scrollHeight;
+        live.textContent = frames.length ? 'Кадр '+wanted+' з '+frames.length+'. '+(kinds[frames[state.position].kind]||'Результат')+'.' : 'Кадрів немає.';
+      }
+      function seek(value,scroll='bottom') {
+        pause(); state.position = frames.length ? Math.max(0,Math.min(frames.length-1,value)) : -1; render(scroll);
+      }
+      function schedule() {
+        if(!state.playing) return;
+        if(state.position >= frames.length-1) {pause();return;}
+        const delay = timing.delay(state.position,state.position+1) / Number(speed.value);
+        state.timer = setTimeout(() => {state.position++;render();schedule();},delay);
+      }
+      function start() {
+        if(frames.length < 2) return;
+        if(activePlayer && activePlayer !== api) activePlayer.pause();
+        if(state.position >= frames.length-1) seek(0,'top');
+        activePlayer = api; state.playing = true;
+        play.textContent = 'Ⅱ Пауза'; play.setAttribute('aria-label','Призупинити відтворення');
+        schedule();
+      }
+      function selectRun(index,focus=false) {
+        pause(); state.selected = index; run = runs[index];
+        frames = Array.isArray(run.frames) ? run.frames : [];
+        timing = timingFor(run,frames);
+        state.position = frames.length ? 0 : -1; state.rendered = 0; state.expanded = new Set();
+        screen.replaceChildren();
+        Array.from(tabs.children).forEach((tab,i) => {tab.setAttribute('aria-selected',String(i===index));tab.tabIndex=i===index?0:-1;});
+        panel.setAttribute('aria-labelledby',tabs.children[index].id);
+        if(focus) tabs.children[index].focus();
+        const statusText = text(run.status) || 'Статус не зазначено';
+        const expected = /очікуван|відомі дефекти|expected/i.test(statusText);
+        const failure = !expected && /помил|невдал|fail|error/i.test(statusText);
+        const success = !expected && !failure && /успіш|pass|success/i.test(statusText);
+        status.className = 'status'+(expected?' expected':failure?' failure':success?' success':'');
+        status.textContent = statusText;
+        statusNote.textContent = expected ? 'Очікувана відмова є результатом негативної перевірки. Вона не означає приймання реалізації; звірте її з висновком цього розділу.' : '';
+        statusNote.hidden = !expected;
+        meta.textContent = ['Джерело: '+(text(run.sourceName)||'—'),'Модель: '+(text(run.model)||'—'),'Версія: '+(text(run.version)||'—')].join(' · ');
+        caption.textContent = (run.kind === 'sqlcl' ? 'SQLcl' : 'Claude Code')+' · '+text(run.title);
+        timingBadge.textContent = timing.label; timingNote.textContent = timing.note;
+        screen.setAttribute('aria-label','Кадри прогону: '+text(run.title));
+        scrub.max = String(Math.max(0,frames.length-1));
+        meters.replaceChildren();
+        const metrics = run.metrics || {};
+        [['Час прогону',fmtSeconds(metrics.durationSeconds)],['Вартість, USD',fmtCost(metrics.costUsd)],['Вхід · сума з кешем',fmtCount(metrics.inputTokens)],['Вихідні токени · сума',fmtCount(metrics.outputTokens)],['Виклики інструментів',fmtCount(metrics.toolCalls)],['Перший запит · вхід з кешем',fmtCount(metrics.initialInputTokens)]].forEach(([label,value]) => {
+          const metric = node('div','metric');metric.append(node('dt','',label),node('dd','',value));meters.append(metric);
+        });
+        render('top');
+      }
+      runs.forEach((item,index) => {
+        const tab = button(text(item.title),'tab',() => selectRun(index));
+        tab.id = 'run-tab-'+sectionIndex+'-'+index;tab.setAttribute('role','tab');tab.setAttribute('aria-controls',panel.id);
+        if(item.subtitle) tab.append(node('small','',item.subtitle));
+        tabs.append(tab);
+      });
+      tabs.addEventListener('keydown',event => {
+        let index = state.selected;
+        if(event.key === 'ArrowRight') index = (index+1)%runs.length;
+        else if(event.key === 'ArrowLeft') index = (index-1+runs.length)%runs.length;
+        else if(event.key === 'Home') index = 0;
+        else if(event.key === 'End') index = runs.length-1;
+        else return;
+        event.preventDefault();selectRun(index,true);
+      });
+      selectRun(0);players.push(api);
+      return player;
+    }
+
+    renderLessonStart();
+    data.sections.forEach((section,index) => {
+      const id = 'section-'+(index+1);
+      const element = node('section','step');element.id=id;element.setAttribute('aria-labelledby',id+'-title');
+      const heading = node('div','section-head');
+      const title = node('h2','',section.title);title.id=id+'-title';
+      heading.append(node('span','section-number',String(index+1).padStart(2,'0')),title);
+      if(section.slot) heading.append(node('span','slot',section.slot));
+      element.append(heading,node('p','goal',section.goal));
+      const lessonSection=lesson?.sections?.[sectionKey(section,index)];
+      if(lessonSection?.before) {
+        const before=node('div','lesson-content lesson-before');
+        before.append(node('p','lesson-label','Пояснення та дії'));renderBlocks(lessonSection.before,before);element.append(before);
+      }
+      const runs = (Array.isArray(section.runIds)?section.runIds:[]).map(id => runMap.get(text(id))).filter(Boolean);
+      if(runs.length) {
+        const player=makePlayer(section,runs,index);
+        if(lesson) {
+          const recording=node('details','recording-fold');recording.open=index===0;
+          recording.append(node('summary','','Переглянути запис репетиції · '+runs.length+' '+(runs.length===1?'прогін':'прогони')));
+          const body=node('div','recording-content');
+          body.append(node('p','recording-note','Нижче — збережений результат окремого запуску. Пояснення уроку розміщено перед записом і після нього; кнопки лише відтворюють кадри.'),player);
+          recording.append(body);
+          const api=players[players.length-1];recording.addEventListener('toggle',()=>{if(!recording.open) api.pause();});
+          element.append(recording);
+        } else element.append(player);
+      }
+      else element.append(node('p','empty','Для цього розділу немає опублікованого прогону.'));
+      if(section.takeaway) {const takeaway=node('p','takeaway');takeaway.append(node('strong','','Висновок. '),document.createTextNode(text(section.takeaway)));element.append(takeaway);}
+      if(lessonSection?.after) {
+        const after=node('div','lesson-content lesson-after');
+        after.append(node('p','lesson-label','Розбір і самоперевірка'));renderBlocks(lessonSection.after,after);element.append(after);
+      }
+      containers.append(element);
+      addNav((index+1)+' · '+(shortNames[sectionKey(section,index)] || 'Крок'),id);
+    });
+    renderLessonEnd();
+    const methodLink = node('a','','Метод і межі');methodLink.href='#method';navigation.append(methodLink);
+    (Array.isArray(data.method)?data.method:[]).forEach(item => document.getElementById('method-list').append(node('li','',item)));
+    const nav = document.getElementById('navigation');
+    const measureNav = () => document.documentElement.style.setProperty('--nav-height',Math.ceil(nav.getBoundingClientRect().height)+'px');
+    if('ResizeObserver' in window) new ResizeObserver(measureNav).observe(nav);
+    window.addEventListener('resize',measureNav);measureNav();
+    document.addEventListener('visibilitychange', () => {if(document.hidden) players.forEach(player=>player.pause());});
+    window.addEventListener('pagehide', () => players.forEach(player=>player.pause()));
+    let printState=null;
+    window.addEventListener('beforeprint',()=> {
+      players.forEach(player=>player.pause());
+      if(printState) return;
+      printState=Array.from(document.querySelectorAll('.lesson-fold'),fold=>[fold,fold.open]);
+      printState.forEach(([fold])=>{fold.open=true;});
+    });
+    window.addEventListener('afterprint',()=> {
+      if(!printState) return;
+      printState.forEach(([fold,open])=>{fold.open=open;});printState=null;
+    });
+  })();
+  </script>
+</body>
+</html>

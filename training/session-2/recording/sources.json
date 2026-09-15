@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "title": "Сесія 2 · самостійний практичний урок",
+  "date": "2026-09-15",
+  "description": "Від дефектного пакета до перевіреного виправлення: пояснення, повний контракт, практичні файли й справжні прогони Claude Code та SQLcl. Урок можна пройти без слайдів і шпаргалки.",
+  "sections": [
+    {"id":"baseline","title":"Початковий стан","slot":"до заняття · вступ","goal":"Побачити різницю між відтвореним стартом і виконаним контрактом.","takeaway":"BASELINE_CONFIRMED означає 5 відомих дефектів. Той самий пакет має провалити приймання.","runIds":["baseline","starter-fails"]},
+    {"id":"skill","title":"Skill із доказами","slot":"10–30 хв","goal":"Викликати oracle-lab-review та отримати конкретні порушення з перевірками.","takeaway":"У записі є справжній виклик Skill. Запропонований SQL ще потребує виконання в Oracle.","runIds":["skill-final"]},
+    {"id":"agents","title":"Два окремі рецензенти","slot":"30–45 · 70–85 хв","goal":"Розділити перевірку бізнес-контракту та SQL, потім об'єднати висновки.","takeaway":"Завершилися два oracle-reviewer. Їхні висновки отримані читанням файлів і не замінюють тести.","runIds":["agents-live"]},
+    {"id":"hook","title":"Hook: дозволити й заблокувати","slot":"45–60 хв","goal":"Порівняти дозволений SELECT і відхилений запис DROP через Write.","takeaway":"Hook повернув код 2; файл залишився з SELECT. SQL у цьому прогоні не виконувався.","runIds":["hook-live"]},
+    {"id":"refactor","title":"Специфікація → зміна → Oracle","slot":"85–105 хв","goal":"Пройти рефакторинг у чистій теці, потім перевірити створений пакет у базі.","takeaway":"Claude змінив робоче тіло пакета. Окремий SQLcl-прогін підтвердив 18/18 перевірок із незміненими очікуваннями.","runIds":["refactor-clean","compile","acceptance"]},
+    {"id":"mcp","title":"Claude → SQLcl MCP → Oracle","slot":"підготовка · звірка результату","goal":"Побачити фактичне підключення train і SELECT до скомпільованої функції.","takeaway":"Повернено TRAINER / 25.55 / PASS. Явний числовий формат усуває неоднозначну десяткову кому в CSV.","runIds":["mcp-formatted"]}
+  ],
+  "runs": [
+    {"id":"baseline","title":"Відомий старт","subtitle":"18 перевірок · 5 KNOWN_FAIL","kind":"sqlcl","source":"../.rehearsal/recordings/sql-baseline.txt","command":"python training/session-2/run-lab.py baseline --workspace training/session-2/workspace-ready","expectExit":0,"expectMarker":"BASELINE_CONFIRMED: checks=18, known_failures=5, unexpected=0"},
+    {"id":"starter-fails","title":"Приймання до зміни","subtitle":"очікувана відмова · 5 невідповідностей","kind":"sqlcl","source":"../.rehearsal/recordings/sql-starter-fails.txt","command":"python training/session-2/run-lab.py verify --workspace training/session-2/workspace-ready","expectExit":1,"expectMarker":"unexpected=5"},
+    {"id":"skill-final","title":"Фінальний skill","subtitle":"конкретні входи, рядки й SQL-перевірки","kind":"claude","source":"../.rehearsal/skill-final.jsonl","promptFile":"../.rehearsal/review-prompt.txt"},
+    {"id":"agents-live","title":"Незалежні рев'ю","subtitle":"два oracle-reviewer завершені","kind":"claude","source":"../.rehearsal/agents-live.jsonl","promptFile":"../.rehearsal/agents-prompt.txt"},
+    {"id":"hook-live","title":"SELECT → спроба DROP","subtitle":"реальні Write і події PreToolUse · часові позначки","kind":"claude","source":"../.rehearsal/recordings/hook-recorded.jsonl","promptFile":"../.rehearsal/recordings/hook-recorded.prompt.txt"},
+    {"id":"refactor-clean","title":"Claude змінює пакет","subtitle":"нова чиста тека · тести незмінні","kind":"claude","source":"../.rehearsal/refactor-clean.jsonl","promptFile":"../.rehearsal/refactor-prompt.txt"},
+    {"id":"compile","title":"Компіляція в Oracle","subtitle":"пакет Claude · COMPILE_OK","kind":"sqlcl","source":"../.rehearsal/recordings/sql-compile.txt","command":"python training/session-2/run-lab.py compile --workspace training/session-2/workspace-clean-rehearsal","expectExit":0,"expectMarker":"COMPILE_OK"},
+    {"id":"acceptance","title":"Приймання після зміни","subtitle":"реальний пакет Claude · 18 PASS","kind":"sqlcl","source":"../.rehearsal/recordings/sql-acceptance.txt","command":"python training/session-2/run-lab.py verify --workspace training/session-2/workspace-clean-rehearsal","expectExit":0,"expectMarker":"ACCEPTANCE_PASS: checks=18, unexpected=0"},
+    {"id":"mcp-formatted","title":"Фактичний SELECT","subtitle":"збережене train · лише читання","kind":"claude","source":"../.rehearsal/mcp-formatted.jsonl","promptFile":"../.rehearsal/mcp-prompt.txt"}
+  ],
+  "method": [
+    "Підхід узято з авторського workshop day02-rehearsal: відтворення реальних транскриптів із play/pause, перемотуванням і виміряними показниками. Це запис інструментів, а не відеозахоплення екрана.",
+    "Claude запускався через -p --output-format stream-json --verbose --include-hook-events. Ізольовано проєктні налаштування, MCP вимкнено в усіх прогонах, крім окремого SELECT. Лабораторія синтетична; читання поза робочою текою не входило в завдання.",
+    "Кроки знято окремими CLI-прогонами. Це не одна безперервна розмова. Приймання виконано окремим SQLcl-процесом після компіляції саме пакета, створеного Claude.",
+    "Кадри містять промпт, видимі повідомлення, виклики інструментів, їхні результати й події hook. Внутрішнє міркування, підписи та службові дані акаунта не експортуються. Локальні абсолютні шляхи замінено позначками.",
+    "Час і вартість Claude взято з фінального result. Вхідні токени — input + cache creation + cache read у modelUsage, вихідні показано окремо; для run з агентами це агрегат, який повернув CLI. Перший вхід — ці три поля першого запиту основного агента. Наявність кешу не означає безкоштовний або нульовий контекст.",
+    "Вартість — total_cost_usd, повідомлений CLI для цього прогону; це не прогноз для учасника. Для SQLcl токени й вартість невідомі й показані рискою, а час узято з журналу запуску.",
+    "Програвач показує збережені події. Позначка «темп читання» означає умовну затримку між кадрами, а не точні паузи оригінального термінала. Жодні відсутні екрани /hooks, /context або /mcp не домальовуються.",
+    "Запис містить розбір і реалізацію вправи. На занятті відкривайте відповідний фрагмент після самостійної спроби. Результати моделей збережені як спостереження; приймання коду підтверджує окремий SQL-лог.",
+    "Сторінка працює офлайн і не звертається до Claude або Oracle. Кнопки лише керують відтворенням і копіюванням. Після технічної репетиції TRAINER відновлено до початкового стану; п'ять одночасних учасницьких сеансів не перевірялися."
+  ]
+}

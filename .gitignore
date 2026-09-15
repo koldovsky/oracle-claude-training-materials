@@ -51,3 +51,11 @@ tools/PLSQL-DEVELOPER-CONNECT.md
 
 # Робоча тека публікації слайдів — не частина проєкту
 .public-repo/
+
+# Session 2: generated workspaces and trainer answers stay local.
+training/session-2/workspace*/
+training/session-2/trainer/
+training/session-2/.rehearsal/
+training/PREFLIGHT-SESSION-*.md
+training/REHEARSAL-SESSION-*.md
+__pycache__/
