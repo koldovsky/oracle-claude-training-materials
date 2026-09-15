@@ -15,6 +15,7 @@ reference = (ROOT / "tools" / "cheatsheet-session-1.html").read_text(encoding="u
 style = re.search(r"<style>(.*?)</style>", reference, flags=re.S).group(1)
 style += "\nsection {scroll-margin-top:calc(var(--sheet-nav-height, 158px) + 22px)}\n"
 style += "header a,footer a,.lead a{color:var(--cyan)} header a:focus-visible,footer a:focus-visible,.lead a:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}\n"
+style += ".course-links{display:flex;flex-wrap:wrap;gap:9px 20px;border-bottom:1px solid var(--border,#2b4154);padding-bottom:18px;margin-bottom:24px;font-size:15px}.course-links a{color:var(--cyan)}.course-links a[aria-current=page]{font-weight:700;color:var(--text,#e8f0f5)}\n"
 sections = [
     ("prepare", "0 · Підготовка", "Із кореня репозиторію, до заняття", [
         ("python training/session-2/check-environment.py --database", "PREFLIGHT_PASS. Перевірка підключення лише читає дані.", "sh"),
@@ -55,7 +56,7 @@ sections = [
 ]
 parts = ["<!doctype html><html lang='uk'><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'>",
          "<title>Сесія 2 · шпаргалка</title><style>" + style + "\n@media print{nav,.copy{display:none}.wrap{max-width:none;padding:0}.row{break-inside:avoid;padding-right:13px}body{background:white;color:#17232d}h1,h2,h3,.row pre{color:#17232d}.row,.lead{background:white;border-color:#aaa}}</style>",
-         "<main class='wrap'><header><h1>Сесія 2 · <span>шпаргалка</span></h1><p>Власний skill, агент ревʼю, hook і пакет S2_SETTLEMENT.</p><p>Команди можна копіювати. Усі дані та правила розрахунку навчальні.</p><p><a href='session-2-rehearsal.html'>Демонстрація заняття →</a> · <a href='https://koldovsky.github.io/claude-code-oracle-training/cheatsheet.html'>Шпаргалка Сесії 1</a></p></header>",
+         "<main class='wrap'><div class='course-links' role='navigation' aria-label='Матеріали Сесії 2'><a href='session-2.html'>Початок і файли</a><a href='session-2-slides.html'>Слайди</a><a href='session-2-rehearsal.html'>Демо з поясненнями</a><a href='cheatsheet-session-2.html' aria-current='page'>Шпаргалка</a><a href='https://koldovsky.github.io/claude-code-oracle-training/session-2-video.html'>Відеоурок · 2 години · онлайн</a></div><header><h1>Сесія 2 · <span>шпаргалка</span></h1><p>Власний skill, агент ревʼю, hook і пакет S2_SETTLEMENT.</p><p>Команди можна копіювати. Усі дані та правила розрахунку навчальні.</p><p><a href='session-2.html#downloads'>Завантажити файли заняття</a> · <a href='https://koldovsky.github.io/claude-code-oracle-training/cheatsheet.html'>Шпаргалка Сесії 1</a></p></header>",
          "<nav>" + "".join(f"<a href='#{sid}'>{escape(title)}</a>" for sid, title, _, _ in sections) + "</nav>",
          "<div class='lead'><p><b>Очікування:</b> 1001 → 25,17; CANCELLED → 0; 1005 → 0,67 після округлення загальної виплати. Невідомий ID → −20001; NULL → −20002.</p><p>Hook контролює Write/Edit файлів lab/*.sql. Запуск через Bash, SQLcl чи MCP він не фільтрує. Доступ до бази визначають гранти Oracle.</p></div>"]
 for sid, title, subtitle, cards in sections:
@@ -105,6 +106,7 @@ if args.public_dir:
     materials_dir = public_dir / "session-2-materials"
     materials_dir.mkdir(parents=True, exist_ok=True)
     public_html = html.replace("href='https://koldovsky.github.io/claude-code-oracle-training/cheatsheet.html'", "href='cheatsheet.html'")
+    public_html = public_html.replace("href='https://koldovsky.github.io/claude-code-oracle-training/session-2-video.html'>Відеоурок · 2 години · онлайн", "href='session-2-video.html'>Відеоурок · 2 години")
     material_sources = {
         "../training/HANDOUT-SESSION-2.md": ROOT / "training" / "HANDOUT-SESSION-2.md",
         "../training/HOMEWORK-SESSION-2.md": ROOT / "training" / "HOMEWORK-SESSION-2.md",

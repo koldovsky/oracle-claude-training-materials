@@ -26,8 +26,11 @@ REQUIRED_FILES = (
     "training/session-2/run-lab.py",
     "tools/cheatsheet-session-2.html",
     "tools/session-2-rehearsal.html",
+    "tools/session-2.html",
+    "tools/session-2-slides.html",
     "slides/session-2.pdf",
-)
+    "tools/session-2-slides/manifest.json",
+) + tuple(f"tools/session-2-slides/slide-{i:02d}.png" for i in range(1, 27))
 ALLOWED_TREES = {
     "training/session-2/lab": {".sql", ".md"},
     "training/session-2/extensions": {".py", ".md", ".json"},
@@ -48,6 +51,10 @@ START_HERE = """# Сесія 2 · почніть тут
 Розпакуйте весь архів зі збереженням структури тек. Наведені перші команди
 виконуйте з теки, де лежить цей START-HERE.md.
 
+Відкрийте [START-HERE.html](START-HERE.html) або
+[центр матеріалів](tools/session-2.html) у браузері: звідти можна перейти
+до слайдів, демо, шпаргалки та двогодинного відеоуроку онлайн.
+
 ## Матеріали
 
 - [Робочий листок](training/HANDOUT-SESSION-2.md)
@@ -57,6 +64,8 @@ START_HERE = """# Сесія 2 · почніть тут
 - [Шпаргалка з командами](tools/cheatsheet-session-2.html)
 - [Записи демонстрацій](tools/session-2-rehearsal.html)
 - [Слайди PDF](slides/session-2.pdf)
+- [Слайди з навігацією](tools/session-2-slides.html)
+- [Відеоурок · 2 години · онлайн](https://koldovsky.github.io/claude-code-oracle-training/session-2-video.html)
 
 Записи містять розбір і виправлення пакета. Відкривайте відповідний фрагмент
 після власної спроби виконати вправу. Програвач працює офлайн.
@@ -118,6 +127,17 @@ compile, verify, reset і cleanup; вибирайте лише потрібну 
     python -m unittest discover -s training/session-2/tests -v
 
 Ці Python-тести не підключаються до бази даних.
+"""
+
+START_HERE_HTML = """<!doctype html>
+<html lang="uk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Сесія 2 · почніть тут</title><style>body{font:19px/1.7 system-ui;background:#090e15;color:#e8f0f5;max-width:760px;margin:8vh auto;padding:24px}a{color:#62dbd5}h1{line-height:1.2}.button{display:inline-block;padding:12px 20px;background:#62dbd5;color:#08252c;border-radius:8px;font-weight:bold;text-decoration:none}li{margin:12px 0}code{font-size:.9em}</style></head><body>
+<h1>Сесія 2 · почніть тут</h1>
+<p>Розпакуйте весь архів зі збереженням структури тек. У центрі матеріалів є всі переходи, пояснення та команди підготовки.</p>
+<p><a class="button" href="tools/session-2.html">Відкрити центр матеріалів</a></p>
+<ul><li><a href="tools/session-2-slides.html">Слайди</a></li><li><a href="tools/session-2-rehearsal.html">Демо з поясненнями</a></li><li><a href="tools/cheatsheet-session-2.html">Шпаргалка</a></li><li><a href="https://koldovsky.github.io/claude-code-oracle-training/session-2-video.html">Відеоурок · 2 години · онлайн</a></li><li><a href="START-HERE.md">Докладна текстова інструкція</a></li></ul>
+<p>Перші команди виконуйте з цієї теки, де лежить <code>START-HERE.html</code>. Файли лабораторії, PDF і текстовий урок доступні офлайн. Відеоурок завантажується окремо зі своєї сторінки.</p>
+</body></html>
 """
 
 
@@ -240,13 +260,14 @@ def main() -> int:
     temporary = None
     try:
         files = collect_files()
-        expected_names = {*files, "START-HERE.md"}
+        expected_names = {*files, "START-HERE.md", "START-HERE.html"}
         output.parent.mkdir(parents=True, exist_ok=True)
         with tempfile.NamedTemporaryFile(prefix=output.stem + ".", suffix=".tmp",
                                          dir=output.parent, delete=False) as handle:
             temporary = Path(handle.name)
         with zipfile.ZipFile(temporary, "w", zipfile.ZIP_DEFLATED, compresslevel=9) as bundle:
             bundle.writestr("START-HERE.md", START_HERE.encode("utf-8"))
+            bundle.writestr("START-HERE.html", START_HERE_HTML.encode("utf-8"))
             for name, source in sorted(files.items()):
                 bundle.write(source, name)
         validate_zip(temporary, expected_names)

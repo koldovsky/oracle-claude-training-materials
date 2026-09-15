@@ -1,0 +1,161 @@
+{
+  "sourcePdfSha256": "20b67a00fc14f9ee49240dad6d5a4197174910dd856df71f5d95e6d5fbc90a27",
+  "slides": [
+    {
+      "path": "slide-01.png",
+      "title": "Claude Code: розширення",
+      "bytes": 50068,
+      "sha256": "b6d3ce76ef1c7a6e410004f5bdd764c4e3553de40e56a04e11a2ae9f82b26d1e"
+    },
+    {
+      "path": "slide-02.png",
+      "title": "Дві години практики",
+      "bytes": 83840,
+      "sha256": "b28fa0259fb5bcfc0b4e6bd7967125c8e8ac2840977967c774cbecb7e0443b1b"
+    },
+    {
+      "path": "slide-03.png",
+      "title": "Доказ результату",
+      "bytes": 55809,
+      "sha256": "6263dae37cf8e472cba081a8219762d36c238e4aaae6636089c2505a86ebe3e8"
+    },
+    {
+      "path": "slide-04.png",
+      "title": "Розрахунок виплати продавцю",
+      "bytes": 58527,
+      "sha256": "286802efe2e633cd3c28a8b1bce9024d933091c2e44e66b62f256b3cc0c7733a"
+    },
+    {
+      "path": "slide-05.png",
+      "title": "Контракт пакета",
+      "bytes": 57023,
+      "sha256": "84b69970a3b0639943635b7283806cae46972049ea70d89201d6c415c493d6ed"
+    },
+    {
+      "path": "slide-06.png",
+      "title": "Очікувані результати",
+      "bytes": 81160,
+      "sha256": "13f72372cf85bbc0db2aaecfae55a02c8b0941c101ad28d799d8309f150adc4f"
+    },
+    {
+      "path": "slide-07.png",
+      "title": "Власний skill",
+      "bytes": 28000,
+      "sha256": "ec5e766938473dbc17c7d83b61164047f83a1f3911d5a47d7fe0619862c6f045"
+    },
+    {
+      "path": "slide-08.png",
+      "title": "Структура skill",
+      "bytes": 51899,
+      "sha256": "f92a7da9c78288bfb832cceaeeb7bfc88a33f6a3ad2e37cc0f28257504314ec2"
+    },
+    {
+      "path": "slide-09.png",
+      "title": "Ревʼю стартового пакета",
+      "bytes": 58113,
+      "sha256": "65b83b0eab66ba911048d39326629335e0b39254fb26d1cc087b77970629f8cd"
+    },
+    {
+      "path": "slide-10.png",
+      "title": "Якість знахідки",
+      "bytes": 57302,
+      "sha256": "1c9fec2f8652db19fb8f6192a37a21725df4f33aa2277a976eba790a2e84849e"
+    },
+    {
+      "path": "slide-11.png",
+      "title": "Агент ревʼю",
+      "bytes": 29449,
+      "sha256": "507c706b4e09415c0f8c745a91ae4f78fb763a1298412181f874f4da3b04dcae"
+    },
+    {
+      "path": "slide-12.png",
+      "title": "Завдання агенту",
+      "bytes": 50335,
+      "sha256": "20a2c2e491f419e09e981197aeca7e32fbbaf45e3ead34747231b84cda34edf4"
+    },
+    {
+      "path": "slide-13.png",
+      "title": "Межі ізоляції",
+      "bytes": 56021,
+      "sha256": "14ea8ad1cfb834bb96751d9ccb1b4ba70f5f5949499cfd361904a303af08e04a"
+    },
+    {
+      "path": "slide-14.png",
+      "title": "Hook перед записом",
+      "bytes": 38675,
+      "sha256": "47af370999673e975364f65f0d0e9e5cdc6edcf25fdf785cc927e823e2ec4afd"
+    },
+    {
+      "path": "slide-15.png",
+      "title": "Перевірка SQL-файлу",
+      "bytes": 57461,
+      "sha256": "ac479dcd0046e7480ede4f829cf0ea916e03570acb82fdc0f87cb250521d78cf"
+    },
+    {
+      "path": "slide-16.png",
+      "title": "Позитивний і негативний приклади",
+      "bytes": 62669,
+      "sha256": "ad38d9d1a4f01b4fdd1f8f08bad50c830b6ba78e77a0bf2478b6a681e2a5db06"
+    },
+    {
+      "path": "slide-17.png",
+      "title": "Що контролює цей hook",
+      "bytes": 49607,
+      "sha256": "d1a75d94c334f4683d71f97a48819c9e3b44e2a85ac9cf356de17fb39507cbf9"
+    },
+    {
+      "path": "slide-18.png",
+      "title": "Перерва 10 хвилин",
+      "bytes": 36708,
+      "sha256": "b38b07c19a9096260f9b48b12198ad4f80e4b3d722607275ea333ef4f2691426"
+    },
+    {
+      "path": "slide-19.png",
+      "title": "Два незалежні ревʼю",
+      "bytes": 58027,
+      "sha256": "f8b16d8d526e237b62aaed6fea2768242685821e96828e7610d25e4216509fa4"
+    },
+    {
+      "path": "slide-20.png",
+      "title": "Завдання для паралельної роботи",
+      "bytes": 43639,
+      "sha256": "24407ba5b6b93787153d89924e4e87029f6b4d4c994608bbb3b5258a769a4101"
+    },
+    {
+      "path": "slide-21.png",
+      "title": "План перед реалізацією",
+      "bytes": 71042,
+      "sha256": "5a1d00248ef14eec69fb147eb7e10db7752a4bbcabc5016c901ce66d2a357473"
+    },
+    {
+      "path": "slide-22.png",
+      "title": "Реалізація й Oracle",
+      "bytes": 64545,
+      "sha256": "b0e8e4bbae90e305a9651eaead961c0098a51021e2c886beaeae1dc651d83739"
+    },
+    {
+      "path": "slide-23.png",
+      "title": "Приймання результату",
+      "bytes": 57330,
+      "sha256": "462d7bdb202e796857268730c4af1870875e77d6fc0449f13f3d6aaad47555f9"
+    },
+    {
+      "path": "slide-24.png",
+      "title": "Орієнтація у великій системі",
+      "bytes": 61513,
+      "sha256": "efa3f535e0f9b79ab9edc845d1d95e54d64ebd8c0c69b8be1ae4437c5f7e3865"
+    },
+    {
+      "path": "slide-25.png",
+      "title": "Домашнє завдання №2",
+      "bytes": 69430,
+      "sha256": "1c83dad98ce0268056a519e2afea2c4063ffd0b675c90a2de00f6c3713f32468"
+    },
+    {
+      "path": "slide-26.png",
+      "title": "Від правил до перевірки",
+      "bytes": 38806,
+      "sha256": "fc95eea49beb3b590c73b44e8f291578052fab08f2c03e9840ca22ce71237504"
+    }
+  ]
+}

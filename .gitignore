@@ -59,3 +59,6 @@ training/session-2/.rehearsal/
 training/PREFLIGHT-SESSION-*.md
 training/REHEARSAL-SESSION-*.md
 __pycache__/
+
+# Large rendered video assets live on the public teaching site.
+tools/session-2-video-media/

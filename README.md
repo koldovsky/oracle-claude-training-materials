@@ -7,6 +7,10 @@
 
 ## Сесія 2
 
+[Початок, навігація й усі завантаження](https://koldovsky.github.io/claude-code-oracle-training/session-2.html) ·
+[Двогодинний відеоурок українською](https://koldovsky.github.io/claude-code-oracle-training/session-2-video.html) ·
+[Слайди Сесії 2](https://koldovsky.github.io/claude-code-oracle-training/session-2-slides.html)
+
 [Матеріали та запуск лабораторії](training/session-2/README.md) ·
 [Робочий листок](training/HANDOUT-SESSION-2.md) ·
 [Шпаргалка](tools/cheatsheet-session-2.html) ·
