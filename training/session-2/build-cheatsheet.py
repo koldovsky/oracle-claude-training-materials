@@ -17,7 +17,7 @@ style += "\nsection {scroll-margin-top:calc(var(--sheet-nav-height, 158px) + 22p
 style += "header a,footer a,.lead a{color:var(--cyan)} header a:focus-visible,footer a:focus-visible,.lead a:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}\n"
 style += ".course-links{display:flex;flex-wrap:wrap;gap:9px 20px;border-bottom:1px solid var(--border,#2b4154);padding-bottom:18px;margin-bottom:24px;font-size:15px}.course-links a{color:var(--cyan)}.course-links a[aria-current=page]{font-weight:700;color:var(--text,#e8f0f5)}\n"
 sections = [
-    ("prepare", "0 · Підготовка", "Із кореня репозиторію, до заняття", [
+    ("prepare", "0 · Підготовка", "Із кореня репозиторію або розпакованого ZIP, до заняття", [
         ("python training/session-2/check-environment.py --database", "PREFLIGHT_PASS. Перевірка підключення лише читає дані.", "sh"),
         ("python training/session-2/setup-workspace.py", "WORKSPACE_READY. Наявну теку скрипт не перезаписує.", "sh"),
         ("cd training/session-2/workspace", "Далі всі команди виконуємо з цієї теки.", "sh"),
@@ -61,6 +61,8 @@ parts = ["<!doctype html><html lang='uk'><meta charset='utf-8'><meta name='viewp
          "<div class='lead'><p><b>Очікування:</b> 1001 → 25,17; CANCELLED → 0; 1005 → 0,67 після округлення загальної виплати. Невідомий ID → −20001; NULL → −20002.</p><p>Hook контролює Write/Edit файлів lab/*.sql. Запуск через Bash, SQLcl чи MCP він не фільтрує. Доступ до бази визначають гранти Oracle.</p></div>"]
 for sid, title, subtitle, cards in sections:
     parts.append(f"<section id='{sid}'><h2>{escape(title)}</h2><p class='tagline'>{escape(subtitle)}</p>")
+    if sid == "prepare":
+        parts.append("<div class='lead'><p><b>Репозиторій той самий, що в Сесії 1:</b> <a href='https://github.com/koldovsky/oracle-claude-training-materials'>oracle-claude-training-materials</a>. Спочатку <a href='session-2.html#repository'>оновіть наявну копію, клонуйте нову або завантажте ZIP</a>.</p><p>Корінь — тека, де є <code>training/session-2/setup-workspace.py</code>. Запускайте перші дві команди звідси; третя переводить у створену робочу теку.</p></div>")
     for command, expected, kind in cards:
         parts.append(f"<div class='row {kind}'><pre>{escape(command)}</pre><button type='button' class='copy' aria-label='Копіювати команду'>Копіювати</button><span class='note'>{escape(expected)}</span></div>")
     if sid == "homework":

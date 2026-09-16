@@ -32,12 +32,38 @@
 `slides/session-2.pdf` у локальній теці проєкту тренера.
 PDF також входить до архіву учасника `tools/session-2-participant.zip`.
 
+## Де взяти файли
+
+Використовуємо **той самий репозиторій, що й у Сесії 1**:
+[oracle-claude-training-materials](https://github.com/koldovsky/oracle-claude-training-materials).
+Матеріали другого заняття розташовані в `training/session-2/`.
+
+Якщо копія вже є, відкрийте термінал у її корені й оновіть матеріали:
+
+```bash
+git pull --ff-only
+```
+
+Якщо завантажуєте вперше, виконайте з теки для навчальних проєктів:
+
+```bash
+git clone https://github.com/koldovsky/oracle-claude-training-materials.git
+cd oracle-claude-training-materials
+```
+
+Альтернатива — [повний ZIP учасника](https://koldovsky.github.io/claude-code-oracle-training/downloads/session-2-participant.zip).
+Розпакуйте весь архів. Для практики достатньо обрати один із цих способів.
+
+**Корінь** — тека, у якій безпосередньо є `training/` і доступний файл
+`training/session-2/setup-workspace.py`. У ZIP поруч також лежить `START-HERE.html`.
+До команди переходу в `workspace` запускайте підготовку саме звідси.
+
 ## Підготовка робочої теки
 
 Потрібні Python **3.10+**, Git, SQLcl, Claude Code і особисте збережене з'єднання SQLcl
 `train` із Сесії 1. Зовнішні бібліотеки Python для підготовки теки не потрібні.
 
-Із кореня репозиторію:
+Із кореня репозиторію або розпакованого ZIP:
 
 ```bash
 python training/session-2/setup-workspace.py
@@ -53,7 +79,7 @@ cd training/session-2/workspace
 python training/session-2/setup-workspace.py training/session-2/workspace-rehearsal
 ```
 
-Цю альтернативну команду також виконують **із кореня репозиторію**. Нова локальна
+Цю альтернативну команду також виконують **із кореня репозиторію або ZIP**. Нова локальна
 тека не створює нову схему Oracle: стан бази визначає з'єднання `train`.
 
 Якщо у вашій системі Python 3 запускається як `python3`, використовуйте цю назву
@@ -113,7 +139,7 @@ claude
 
 У Windows-автоматизації можна використати `run-lab.py`: він явно задає порожній
 стандартний ввід SQLcl, встановлює правильну робочу теку й перевіряє результат.
-**Наведені команди виконуються з кореня репозиторію**, а не з `workspace/`:
+**Наведені команди виконуються з кореня репозиторію або ZIP**, а не з `workspace/`:
 
 ```bash
 python training/session-2/run-lab.py baseline
